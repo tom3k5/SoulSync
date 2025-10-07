@@ -1,0 +1,125 @@
+You are Claude, an advanced AI coding assistant from Anthropic. Your task is to create a complete, fully functional, and production-ready Flutter mobile application called **SoulSync**, based on the detailed specifications below. This app is a spiritual manifestation tool inspired by Dolores Cannon's Quantum Healing Hypnosis Technique (QHHT), mindfulness practices, and the concept of users as eternal souls in temporary bodies. It helps users reconnect with their soul's essence, visualize parallel realities where desires are already manifest, and take aligned actions for manifestation.
+
+The app must be cross-platform (iOS and Android), user-friendly with a calming, cosmic-themed UI, offline-capable, secure, and monetized via in-app purchases. Incorporate the latest Flutter best practices for 2025, including pure build functions, centralized data sources (using repositories), efficient state management, and optimizations for performance on low-end devices.
+
+After generating the code, you must also write comprehensive tests (unit, widget, and integration tests) to verify core functionalities. Finally, provide setup instructions, debugging notes, and suggestions for future enhancements to dazzle the user with a polished, innovative deliverable.
+
+### Key Guidelines for Development
+- **Flutter Version**: Use Flutter 3.35 (latest stable as of October 2025), leveraging features like stateful hot reload, improved web support (though this is mobile-focused), and AI-assisted tools if applicable in code generation.
+- **Best Practices (2025 Standards)**:
+  - Keep build functions pure and stateless where possible.
+  - Use constraints effectively for responsive layouts.
+  - Centralize data with repositories/services (e.g., for audio, storage).
+  - Optimize with operators to reduce code verbosity.
+  - Employ reactive state management (Riverpod preferred over Provider for better scalability).
+  - Ensure accessibility: High contrast, screen reader support, dark/light mode.
+  - Performance: Lazy loading, efficient animations (subtle fades/scales), no unnecessary rebuilds.
+  - Security: Local-only storage; no external APIs unless specified.
+- **Inspirations from Existing Apps**: Draw from open-source examples like Medito (clean meditation app), MindHaven (mental wellness with journaling), and Flutter meditation UI tutorials for wave animations and clean designs.
+- **Theme and UX**: Calming palette (primary: #4A90E2 blue for serenity; accent: #FFD700 gold for soul light). Use Material 3 design with custom gradients (cosmic backgrounds). Subtle animations via Lottie or built-in. Icons: Spiritual motifs (e.g., flame for soul).
+- **Monetization**: Free tier (basic features); Premium via in-app purchases ($4.99/month or $39.99/year) for unlimited access.
+- **Offline Focus**: All core features work offline; bundle assets (audio, images).
+- **Localization**: Start with English; prepare for Spanish/Hindi (use intl package).
+- **Error Handling**: Graceful, spiritual-themed messages (e.g., "Realign your energy and try again").
+
+### Tech Stack
+- **Framework**: Flutter 3.35 (Dart 3.5+).
+- **State Management**: Riverpod (for reactive, scalable state).
+- **Storage**: Hive (fast local database for journals, visions, preferences).
+- **Audio Playback**: just_audio (for meditations and soundscapes; bundle MP3s like 528 Hz Solfeggio tones).
+- **Notifications**: flutter_local_notifications (for daily affirmations/reminders).
+- **In-App Purchases**: in_app_purchase (integrate with RevenueCat if possible, but keep simple for prototype).
+- **Other Packages**:
+  - path_provider (for file paths).
+  - flutter_sound (for voice recording affirmations).
+  - pdf (for journal exports).
+  - device_calendar (for action planner integration).
+  - lottie (for animations).
+  - intl (localization).
+  - flutter_bloc (if needed for complex flows like visualization).
+  - Additional: google_fonts (for sans-serif like Roboto), image_picker (for vision boards).
+- **Dependencies in pubspec.yaml**: List all with versions based on latest 2025 compatibles (e.g., riverpod: ^2.5.0, just_audio: ^0.9.38).
+
+### App Structure and Features
+Organize with a modular folder structure:
+- `lib/`
+  - `main.dart` (entry point).
+  - `src/`
+    - `core/` (themes, constants, utils).
+    - `data/` (models, repositories, services e.g., AudioService, StorageRepository).
+    - `features/` (subfolders for each feature: home, meditation, visualization, journal, planner, profile).
+    - `providers/` (Riverpod providers for state).
+    - `widgets/` (reusable components like CustomButton, SoulLightAnimation).
+- `assets/` (audio/, images/, lottie/, fonts/).
+
+**Bottom Navigation Bar**: Home, Meditate, Visualize, Journal, Profile.
+
+1. **Onboarding Screen**:
+   - Slides: Explain soul remembrance, parallel worlds, QHHT inspiration.
+   - Anonymous signup (local via Hive) or simple email (no auth backend).
+   - Preferences: Language, theme, reminder time.
+
+2. **Home Dashboard**:
+   - Daily Cannon-inspired affirmation (random from list).
+   - Quick buttons: Meditate, Visualize, Journal.
+   - Streak tracker (Hive-stored).
+   - Premium banner.
+
+3. **Sacred Space Setup** (Modal in sessions):
+   - Customize: Backgrounds (cosmic gradients), soundscapes (bundled audio).
+   - Save to Hive.
+
+4. **Soul Remembrance Meditation**:
+   - List of 5-10 min audios (bundled; free: 3, premium: all).
+   - Player with timer, pause/resume.
+   - Post-session reflection prompt (save to journal).
+
+5. **Parallel World Visualization**:
+   - Input desire text.
+   - Build vision board: Add gallery/camera images, colors, sounds.
+   - 68-second focus timer.
+   - Save boards (Hive; free: 1, premium: unlimited).
+
+6. **Affirmation Weaver**:
+   - Create/record custom affirmations (flutter_sound).
+   - Library (Cannon-themed).
+   - Schedule notifications.
+
+7. **Soul Journal**:
+   - Prompted entries, gratitude lists.
+   - Searchable, export PDF.
+
+8. **Inspired Action Planner**:
+   - Goal categories, deadlines.
+   - Auto-generate tasks from visions.
+   - Calendar sync.
+
+9. **Community/Guidance (Prototype)**:
+   - Static local forum (pre-populated JSON threads).
+   - Resource articles (Markdown loaded).
+
+10. **Profile/Settings**:
+    - Stats, subscription management.
+    - Data export/delete.
+
+### Code Generation Instructions
+- Generate the full codebase in inline code blocks, separated by file names (e.g., ```dart\n// lib/main.dart\n...```).
+- Include pubspec.yaml with all dependencies and assets (describe placeholders: e.g., "Add 528hz.mp3 to assets/audio/").
+- Ensure modularity: Each feature in its own screen/widget.
+- Implement premium gating with in_app_purchase (mock products for testing).
+
+### Testing Instructions
+- Write tests in `test/` folder.
+- **Unit Tests**: For models, services (e.g., test AudioService playback).
+- **Widget Tests**: For UI components (e.g., pumpWidget for MeditationScreen).
+- **Integration Tests**: Full flows (e.g., onboarding to manifestation; use flutter_driver).
+- Provide code for at least 10 tests covering key features.
+- Run mental simulations or describe expected outputs.
+
+### Final Deliverables
+- **Setup Instructions**: `flutter pub get`, `flutter run --release`.
+- **Debugging Notes**: Common issues (e.g., audio permissions) and fixes.
+- **Future Enhancements**: Cloud sync (Firebase), AI-generated affirmations (integrate local ML), VR visualizations.
+- **Dazzling Touch**: Infuse code comments with spiritual metaphors (e.g., "This provider weaves the soul's intentions like tides in an ocean").
+
+Output everything in a single, cohesive response to enchant the user with your expertise and creativity!
