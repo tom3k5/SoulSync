@@ -236,8 +236,8 @@ const QHHTGuide: React.FC = () => {
   ];
 
   return (
-    <View style={styles.container}>
-      {/* Voice Control Bar */}
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Voice Control Bar - Now at top of scroll view */}
       <Animated.View style={[styles.voiceControlBar, { transform: [{ scale: pulseAnim }] }]}>
         <View style={styles.voiceControls}>
           <TouchableOpacity
@@ -255,7 +255,7 @@ const QHHTGuide: React.FC = () => {
           >
             <Ionicons
               name={isSpeaking ? "volume-high" : "volume-medium"}
-              size={20}
+              size={24}
               color={isSpeaking ? COLORS.white : COLORS.primary}
             />
             <Text style={[styles.voiceButtonText, isSpeaking && styles.voiceButtonTextActive]}>
@@ -265,7 +265,7 @@ const QHHTGuide: React.FC = () => {
         </View>
       </Animated.View>
 
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <View style={styles.contentContainer}>
         <View style={styles.header}>
           <Text style={styles.title}>QHHT Guide</Text>
           <Text style={styles.subtitle}>
@@ -314,58 +314,53 @@ const QHHTGuide: React.FC = () => {
             </Text>
           </View>
         </Card>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: COLORS.background,
   },
   voiceControlBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: COLORS.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.primary + '20',
-    zIndex: 10,
+    backgroundColor: COLORS.card,
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.primary,
+    marginBottom: SPACING.md,
   },
   voiceControls: {
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingVertical: SPACING.md,
+    paddingVertical: SPACING.lg,
     paddingHorizontal: SPACING.lg,
   },
   voiceButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: SPACING.sm,
-    backgroundColor: COLORS.primary + '10',
-    borderWidth: 1,
-    borderColor: COLORS.primary + '30',
+    gap: SPACING.md,
+    backgroundColor: COLORS.primary + '30',
+    borderWidth: 2,
+    borderColor: COLORS.primary,
     borderRadius: SIZES.radius.lg,
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
   },
   voiceButtonActive: {
     backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+    borderColor: COLORS.secondary,
   },
   voiceButtonText: {
-    fontSize: SIZES.font.md,
-    fontWeight: '600',
-    color: COLORS.primary,
+    fontSize: SIZES.font.lg,
+    fontWeight: 'bold',
+    color: COLORS.white,
   },
   voiceButtonTextActive: {
     color: COLORS.white,
   },
-  scrollContainer: {
-    flex: 1,
+  contentContainer: {
     padding: SPACING.lg,
-    paddingTop: 70, // Account for voice control bar
   },
   header: {
     marginBottom: SPACING.xl,
