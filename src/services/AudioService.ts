@@ -319,22 +319,26 @@ class AudioService {
     } = {}
   ): Promise<void> {
     try {
-      const speechOptions = {
-        voice: options.voice || 'en-US-female',
+      // Set speaking state immediately
+      this.isSpeaking = true;
+      options.onStart?.();
+      this.currentSpeechCallback?.(true);
+
+      const speechOptions: Speech.SpeechOptions = {
         language: options.language || 'en',
         pitch: options.pitch || 1.0,
         rate: options.rate || 0.8, // Slightly slower for meditation
-        onStart: () => {
-          this.isSpeaking = true;
-          options.onStart?.();
-          this.currentSpeechCallback?.(true);
-        },
         onDone: () => {
           this.isSpeaking = false;
           options.onDone?.();
           this.currentSpeechCallback?.(false);
         },
+        onStopped: () => {
+          this.isSpeaking = false;
+          this.currentSpeechCallback?.(false);
+        },
         onError: (error: any) => {
+          console.error('TTS onError callback:', error);
           this.isSpeaking = false;
           options.onError?.(error);
           this.currentSpeechCallback?.(false);
@@ -344,6 +348,8 @@ class AudioService {
       await Speech.speak(text, speechOptions);
     } catch (error) {
       console.error('Error speaking text:', error);
+      this.isSpeaking = false;
+      this.currentSpeechCallback?.(false);
       throw error;
     }
   }

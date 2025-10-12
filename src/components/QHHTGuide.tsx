@@ -54,12 +54,19 @@ const QHHTGuide: React.FC = () => {
   useEffect(() => {
     const initializeTTS = async () => {
       try {
+        console.log('Initializing TTS...');
         const voices = await AudioService.getAvailableVoices();
+        console.log('Available voices:', voices.length);
         setAvailableVoices(voices);
 
         AudioService.setSpeechCallback((speaking: boolean) => {
+          console.log('Speech callback - speaking:', speaking);
           setIsSpeaking(speaking);
         });
+
+        // Test if Speech is available
+        const isSpeechAvailable = await Speech.isSpeakingAsync();
+        console.log('Speech API available, currently speaking:', isSpeechAvailable);
       } catch (error) {
         console.error('Error initializing TTS:', error);
       }
@@ -95,21 +102,30 @@ const QHHTGuide: React.FC = () => {
 
   const speakSection = async (text: string, sectionName: string) => {
     try {
+      console.log('Starting speech for section:', sectionName);
+      console.log('Text to speak:', text.substring(0, 100) + '...');
+
       setCurrentSection(sectionName);
       await AudioService.speakText(text, {
         rate: 0.75, // Slower for educational content
         pitch: 1.0,
-        onStart: () => setIsSpeaking(true),
+        onStart: () => {
+          console.log('Speech started');
+          setIsSpeaking(true);
+        },
         onDone: () => {
+          console.log('Speech completed');
           setIsSpeaking(false);
           setCurrentSection('');
         },
         onError: (error) => {
-          console.error('TTS error:', error);
+          console.error('TTS error in callback:', error);
           setIsSpeaking(false);
           setCurrentSection('');
         },
       });
+
+      console.log('Speech initiated successfully');
     } catch (error) {
       console.error('Error speaking section:', error);
       setIsSpeaking(false);
