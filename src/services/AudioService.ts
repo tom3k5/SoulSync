@@ -319,21 +319,26 @@ class AudioService {
     } = {}
   ): Promise<void> {
     try {
+      console.log('AudioService.speakText called with text length:', text.length);
+
       // Set speaking state immediately
       this.isSpeaking = true;
       options.onStart?.();
       this.currentSpeechCallback?.(true);
 
       const speechOptions: Speech.SpeechOptions = {
-        language: options.language || 'en',
+        language: options.language || 'en-US',
         pitch: options.pitch || 1.0,
         rate: options.rate || 0.8, // Slightly slower for meditation
+        volume: 1.0, // Ensure full volume
         onDone: () => {
+          console.log('Speech.speak onDone callback triggered');
           this.isSpeaking = false;
           options.onDone?.();
           this.currentSpeechCallback?.(false);
         },
         onStopped: () => {
+          console.log('Speech.speak onStopped callback triggered');
           this.isSpeaking = false;
           this.currentSpeechCallback?.(false);
         },
@@ -345,7 +350,9 @@ class AudioService {
         },
       };
 
-      await Speech.speak(text, speechOptions);
+      console.log('Calling Speech.speak with options:', speechOptions);
+      Speech.speak(text, speechOptions);
+      console.log('Speech.speak called');
     } catch (error) {
       console.error('Error speaking text:', error);
       this.isSpeaking = false;

@@ -137,6 +137,23 @@ const QHHTGuide: React.FC = () => {
     AudioService.stopSpeech();
   };
 
+  // Simple test to verify TTS works
+  const testSimpleSpeech = async () => {
+    try {
+      console.log('Testing simple speech...');
+      await Speech.speak('Hello, this is a test.', {
+        language: 'en-US',
+        pitch: 1.0,
+        rate: 1.0,
+        volume: 1.0,
+        onDone: () => console.log('Simple test completed'),
+        onError: (err) => console.error('Simple test error:', err),
+      });
+    } catch (error) {
+      console.error('Simple test failed:', error);
+    }
+  };
+
   const techniques = [
     {
       title: 'QHHT Induction & Soul Remembrance',
@@ -261,6 +278,15 @@ const QHHTGuide: React.FC = () => {
             <Text style={[styles.voiceButtonText, isSpeaking && styles.voiceButtonTextActive]}>
               {isSpeaking ? 'Speaking...' : 'Voice Guide'}
             </Text>
+          </TouchableOpacity>
+
+          {/* Test Button */}
+          <TouchableOpacity
+            style={[styles.voiceButton, { marginLeft: SPACING.sm }]}
+            onPress={testSimpleSpeech}
+          >
+            <Ionicons name="musical-note" size={24} color={COLORS.primary} />
+            <Text style={styles.voiceButtonText}>Test</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
