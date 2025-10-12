@@ -1,13 +1,14 @@
 // AudioService.ts - Manages meditation audio playback and soundscapes
 import { Audio, AVPlaybackStatus } from 'expo-av';
 import { Sound } from 'expo-av/build/Audio';
+import * as Speech from 'expo-speech';
 
 export interface AudioTrack {
   id: string;
   title: string;
   duration: number; // in seconds
   isPremium: boolean;
-  category: 'meditation' | 'soundscape' | 'affirmation';
+  category: 'meditation' | 'soundscape' | 'affirmation' | 'guidance';
   frequency?: string; // e.g., '528 Hz'
   description?: string;
   uri: string; // local asset or bundled file
@@ -149,48 +150,75 @@ class AudioService {
     return [
       {
         id: 'med_1',
-        title: 'Soul Remembrance Journey',
+        title: 'QHHT Induction & Soul Remembrance',
         duration: 600, // 10 minutes
         isPremium: false,
         category: 'meditation',
-        description: 'Connect with your eternal soul essence through guided visualization',
+        description: 'Traditional QHHT countdown induction (10-1) followed by soul remembrance visualization. Connect with your eternal soul essence through Dolores Cannon\'s proven methodology.',
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Placeholder
       },
       {
         id: 'med_2',
-        title: 'Quantum Field Connection',
+        title: 'Quantum Field & Divine Source Connection',
         duration: 900, // 15 minutes
         isPremium: false,
         category: 'meditation',
-        description: 'Access the infinite possibilities of parallel realities',
+        description: 'Journey through parallel realities and connect with divine source energy. Based on QHHT concepts of infinite consciousness and the quantum nature of reality.',
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Placeholder
       },
       {
         id: 'med_3',
-        title: 'Past Life Recall',
+        title: 'QHHT Past Life Regression',
         duration: 1200, // 20 minutes
         isPremium: true,
         category: 'meditation',
-        description: 'Inspired by QHHT, explore your soul\'s journey across lifetimes',
+        description: 'Complete QHHT past life regression protocol: Life selection, full immersion, higher soul purpose insight, return to present with wisdom. Experience life between lives and soul lessons.',
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // Placeholder
       },
       {
         id: 'med_4',
-        title: 'Higher Self Wisdom',
+        title: 'QHHT Higher Self / Subconscious Communication',
         duration: 900, // 15 minutes
         isPremium: true,
         category: 'meditation',
-        description: 'Receive guidance from your higher consciousness',
+        description: 'Connect directly with your higher self using QHHT protocol. Receive guidance, answers, and profound wisdom from the aspect of you that knows everything.',
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Placeholder
       },
       {
         id: 'med_5',
-        title: 'Deep Theta Healing',
+        title: 'QHHT Body Scanning & Theta Healing',
         duration: 1800, // 30 minutes
         isPremium: true,
         category: 'meditation',
-        description: 'Enter the theta state for profound healing and transformation',
+        description: 'Complete body scan protocol followed by theta state healing. Clear energy blockages, release trapped emotions, accelerate healing. Includes Council of Elders connection.',
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', // Placeholder
+      },
+      {
+        id: 'med_6',
+        title: 'QHHT Future Life Progression',
+        duration: 1200, // 20 minutes
+        isPremium: true,
+        category: 'meditation',
+        description: 'QHHT technique to view potential future timelines. Witness the consequences of current choices and align with your highest path. Soul purpose activation.',
+        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3', // Placeholder
+      },
+      {
+        id: 'med_7',
+        title: 'QHHT Subconscious Healing Session',
+        duration: 2100, // 35 minutes
+        isPremium: true,
+        category: 'meditation',
+        description: 'Extended QHHT-style session focusing on subconscious healing. Address physical, emotional, and spiritual issues at the deepest level where all healing begins.',
+        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3', // Placeholder
+      },
+      {
+        id: 'med_8',
+        title: 'Meet Your Spirit Guide (QHHT Protocol)',
+        duration: 1500, // 25 minutes
+        isPremium: true,
+        category: 'meditation',
+        description: 'QHHT technique to connect with your personal spirit guides and guardian angels. Receive protection, guidance, and messages from your spiritual support team.',
+        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3', // Placeholder
       },
     ];
   }
@@ -272,6 +300,84 @@ class AudioService {
 
   isRecording(): boolean {
     return this.recording !== null;
+  }
+
+  // Text-to-speech functionality for voice guidance
+  private isSpeaking = false;
+  private currentSpeechCallback: ((speaking: boolean) => void) | null = null;
+
+  async speakText(
+    text: string,
+    options: {
+      voice?: string;
+      language?: string;
+      pitch?: number;
+      rate?: number;
+      onStart?: () => void;
+      onDone?: () => void;
+      onError?: (error: any) => void;
+    } = {}
+  ): Promise<void> {
+    try {
+      const speechOptions = {
+        voice: options.voice || 'en-US-female',
+        language: options.language || 'en',
+        pitch: options.pitch || 1.0,
+        rate: options.rate || 0.8, // Slightly slower for meditation
+        onStart: () => {
+          this.isSpeaking = true;
+          options.onStart?.();
+          this.currentSpeechCallback?.(true);
+        },
+        onDone: () => {
+          this.isSpeaking = false;
+          options.onDone?.();
+          this.currentSpeechCallback?.(false);
+        },
+        onError: (error: any) => {
+          this.isSpeaking = false;
+          options.onError?.(error);
+          this.currentSpeechCallback?.(false);
+        },
+      };
+
+      await Speech.speak(text, speechOptions);
+    } catch (error) {
+      console.error('Error speaking text:', error);
+      throw error;
+    }
+  }
+
+  stopSpeech(): void {
+    try {
+      Speech.stop();
+      this.isSpeaking = false;
+      this.currentSpeechCallback?.(false);
+    } catch (error) {
+      console.error('Error stopping speech:', error);
+    }
+  }
+
+  isCurrentlySpeaking(): boolean {
+    return this.isSpeaking;
+  }
+
+  setSpeechCallback(callback: (speaking: boolean) => void): void {
+    this.currentSpeechCallback = callback;
+  }
+
+  clearSpeechCallback(): void {
+    this.currentSpeechCallback = null;
+  }
+
+  // Get available voices
+  async getAvailableVoices(): Promise<Speech.Voice[]> {
+    try {
+      return await Speech.getAvailableVoicesAsync();
+    } catch (error) {
+      console.error('Error getting available voices:', error);
+      return [];
+    }
   }
 }
 

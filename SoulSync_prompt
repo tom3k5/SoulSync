@@ -12,7 +12,7 @@ After generating the code, you must also write comprehensive tests (unit, widget
   - Centralize data with repositories/services (e.g., for audio, storage).
   - Optimize with operators to reduce code verbosity.
   - Employ reactive state management (Riverpod preferred over Provider for better scalability).
-  - Ensure accessibility: High contrast, screen reader support, dark/light mode.
+  - Ensure accessibility: High contrast, screen reader support, dark/light mode, voice guidance for text content.
   - Performance: Lazy loading, efficient animations (subtle fades/scales), no unnecessary rebuilds.
   - Security: Local-only storage; no external APIs unless specified.
 - **Inspirations from Existing Apps**: Draw from open-source examples like Medito (clean meditation app), MindHaven (mental wellness with journaling), and Flutter meditation UI tutorials for wave animations and clean designs.
@@ -32,6 +32,7 @@ After generating the code, you must also write comprehensive tests (unit, widget
 - **Other Packages**:
   - path_provider (for file paths).
   - flutter_sound (for voice recording affirmations).
+  - flutter_tts or equivalent (for text-to-speech voice guidance).
   - pdf (for journal exports).
   - device_calendar (for action planner integration).
   - lottie (for animations).
@@ -46,10 +47,10 @@ Organize with a modular folder structure:
   - `main.dart` (entry point).
   - `src/`
     - `core/` (themes, constants, utils).
-    - `data/` (models, repositories, services e.g., AudioService, StorageRepository).
+    - `data/` (models, repositories, services e.g., AudioService, StorageRepository, TTSService).
     - `features/` (subfolders for each feature: home, meditation, visualization, journal, planner, profile).
     - `providers/` (Riverpod providers for state).
-    - `widgets/` (reusable components like CustomButton, SoulLightAnimation).
+    - `widgets/` (reusable components like CustomButton, SoulLightAnimation, QHHTGuide).
 - `assets/` (audio/, images/, lottie/, fonts/).
 
 **Bottom Navigation Bar**: Home, Meditate, Visualize, Journal, Profile.
@@ -70,9 +71,11 @@ Organize with a modular folder structure:
    - Save to Hive.
 
 4. **Soul Remembrance Meditation**:
-   - List of 5-10 min audios (bundled; free: 3, premium: all).
-   - Player with timer, pause/resume.
+   - Enhanced QHHT meditation library with 8+ techniques (bundled; free: 3, premium: all).
+   - Techniques include: QHHT Induction & Soul Remembrance, Past Life Regression, Higher Self Communication, Body Scanning & Theta Healing, Future Life Progression, Spirit Guide Connection.
+   - Player with timer, pause/resume, voice guidance option.
    - Post-session reflection prompt (save to journal).
+   - QHHT Guide with educational content and voice narration using Text-to-Speech.
 
 5. **Parallel World Visualization**:
    - Input desire text.
@@ -119,7 +122,7 @@ Organize with a modular folder structure:
 ### Final Deliverables
 - **Setup Instructions**: `flutter pub get`, `flutter run --release`.
 - **Debugging Notes**: Common issues (e.g., audio permissions) and fixes.
-- **Future Enhancements**: Cloud sync (Firebase), AI-generated affirmations (integrate local ML), VR visualizations.
+- **Future Enhancements**: Cloud sync (Firebase), AI-generated affirmations (integrate local ML), VR visualizations, enhanced voice guidance across all content, offline QHHT therapy sessions with interactive voice prompts.
 - **Dazzling Touch**: Infuse code comments with spiritual metaphors (e.g., "This provider weaves the soul's intentions like tides in an ocean").
 
 Output everything in a single, cohesive response to enchant the user with your expertise and creativity!

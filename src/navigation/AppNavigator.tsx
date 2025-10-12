@@ -22,11 +22,13 @@ import MindfulMomentScreen from '../screens/MindfulMomentScreen';
 import VisualizationScreen from '../screens/VisualizationScreen';
 import VisionBoardScreen from '../screens/VisionBoardScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import { QHHTGuide } from '../components';
 
 export type RootStackParamList = {
   Onboarding: undefined;
   Login: undefined;
   MainTabs: undefined;
+  QHHTGuide: undefined;
   MeditationSession: {
     title: string;
     duration: string;
@@ -215,6 +217,24 @@ const AppNavigator = () => {
                 presentation: 'modal',
               }}
             />
+            <Stack.Screen
+              name="QHHTGuide"
+              options={{
+                headerShown: true,
+                headerTitle: 'QHHT Guide',
+                headerStyle: {
+                  backgroundColor: COLORS.background,
+                },
+                headerTintColor: COLORS.text,
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+              }}
+            >
+              {() => (
+                <QHHTGuide />
+              )}
+            </Stack.Screen>
             <Stack.Screen
               name="MeditationPlayer"
               component={MeditationPlayerScreen}

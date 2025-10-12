@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
+import Button from '../components/Button';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
 import AudioService, { AudioTrack } from '../services/AudioService';
 import StorageService, { UserProfile } from '../services/StorageService';
@@ -76,6 +77,12 @@ const MeditationScreen = () => {
           </View>
         </View>
 
+        <Button
+          title="Learn About QHHT"
+          onPress={() => (navigation as any).navigate('QHHTGuide')}
+          variant="outline"
+        />
+
         {!profile?.isPremium && (
           <Card style={styles.premiumBanner}>
             <LinearGradient
@@ -84,7 +91,7 @@ const MeditationScreen = () => {
             >
               <Ionicons name="star" size={24} color={COLORS.secondary} />
               <Text style={styles.premiumText}>
-                Free: 3 meditations • Premium: All {tracks.length} journeys
+                Free: 3 QHHT-inspired meditations • Premium: All {tracks.length} soul journeys
               </Text>
             </LinearGradient>
           </Card>
