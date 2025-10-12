@@ -104,17 +104,24 @@ const QHHTGuide: React.FC = () => {
     try {
       console.log('Starting speech for section:', sectionName);
       console.log('Text to speak:', text.substring(0, 100) + '...');
+      console.log('Full text length:', text.length);
 
       setCurrentSection(sectionName);
-      await AudioService.speakText(text, {
-        rate: 0.75, // Slower for educational content
+      setIsSpeaking(true);
+
+      // Use Speech directly like the test button
+      Speech.speak(text, {
+        language: 'en-US',
         pitch: 1.0,
-        onStart: () => {
-          console.log('Speech started');
-          setIsSpeaking(true);
-        },
+        rate: 0.75,
+        volume: 1.0,
         onDone: () => {
           console.log('Speech completed');
+          setIsSpeaking(false);
+          setCurrentSection('');
+        },
+        onStopped: () => {
+          console.log('Speech stopped');
           setIsSpeaking(false);
           setCurrentSection('');
         },
@@ -125,7 +132,7 @@ const QHHTGuide: React.FC = () => {
         },
       });
 
-      console.log('Speech initiated successfully');
+      console.log('Speech.speak called successfully');
     } catch (error) {
       console.error('Error speaking section:', error);
       setIsSpeaking(false);
@@ -134,7 +141,10 @@ const QHHTGuide: React.FC = () => {
   };
 
   const stopSpeaking = () => {
-    AudioService.stopSpeech();
+    console.log('Stopping speech');
+    Speech.stop();
+    setIsSpeaking(false);
+    setCurrentSection('');
   };
 
   // Simple test to verify TTS works
