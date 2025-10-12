@@ -326,7 +326,8 @@ class AudioService {
       options.onStart?.();
       this.currentSpeechCallback?.(true);
 
-      const speechOptions: Speech.SpeechOptions = {
+      // Call Speech.speak directly like the working test
+      Speech.speak(text, {
         language: options.language || 'en-US',
         pitch: options.pitch || 1.0,
         rate: options.rate || 0.8, // Slightly slower for meditation
@@ -348,11 +349,9 @@ class AudioService {
           options.onError?.(error);
           this.currentSpeechCallback?.(false);
         },
-      };
+      });
 
-      console.log('Calling Speech.speak with options:', speechOptions);
-      Speech.speak(text, speechOptions);
-      console.log('Speech.speak called');
+      console.log('Speech.speak called successfully');
     } catch (error) {
       console.error('Error speaking text:', error);
       this.isSpeaking = false;

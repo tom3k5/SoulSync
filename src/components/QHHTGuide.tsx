@@ -7,6 +7,8 @@ import Button from './Button';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
 import AudioService from '../services/AudioService';
 
+// Voice guidance for QHHT educational content
+
 interface TechniqueProps {
   title: string;
   duration: string;
@@ -109,11 +111,11 @@ const QHHTGuide: React.FC = () => {
       setCurrentSection(sectionName);
       setIsSpeaking(true);
 
-      // Use Speech directly like the test button
-      Speech.speak(text, {
+      // Use Speech directly like the working test - simpler approach
+      await Speech.speak(text, {
         language: 'en-US',
         pitch: 1.0,
-        rate: 0.75,
+        rate: 0.8,
         volume: 1.0,
         onDone: () => {
           console.log('Speech completed');
