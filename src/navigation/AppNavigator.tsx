@@ -22,6 +22,9 @@ import MindfulMomentScreen from '../screens/MindfulMomentScreen';
 import VisualizationScreen from '../screens/VisualizationScreen';
 import VisionBoardScreen from '../screens/VisionBoardScreen';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import AffirmationScreen from '../screens/AffirmationScreen';
+import ActionPlannerScreen from '../screens/ActionPlannerScreen';
+import PremiumUpgradeScreen from '../screens/PremiumUpgradeScreen';
 import { QHHTGuide } from '../components';
 
 export type RootStackParamList = {
@@ -40,11 +43,14 @@ export type RootStackParamList = {
   VisionBoard: undefined;
   BreathingExercise: undefined;
   MindfulMoment: undefined;
+  PremiumUpgrade: undefined;
 };
 
 export type MainTabParamList = {
   Home: undefined;
   Meditation: undefined;
+  Affirmations: undefined;
+  ActionPlanner: undefined;
   VisionBoard: undefined;
   Journal: undefined;
   Profile: undefined;
@@ -64,6 +70,10 @@ const MainTabs = () => {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Meditation') {
             iconName = focused ? 'sparkles' : 'sparkles-outline';
+          } else if (route.name === 'Affirmations') {
+            iconName = focused ? 'mic' : 'mic-outline';
+          } else if (route.name === 'ActionPlanner') {
+            iconName = focused ? 'list' : 'list-outline';
           } else if (route.name === 'VisionBoard') {
             iconName = focused ? 'git-network' : 'git-network-outline';
           } else if (route.name === 'Journal') {
@@ -135,6 +145,22 @@ const MainTabs = () => {
         options={{
           title: 'Meditate',
           tabBarLabel: 'Meditate',
+        }}
+      />
+      <Tab.Screen
+        name="Affirmations"
+        component={AffirmationScreen}
+        options={{
+          title: 'Affirmations',
+          tabBarLabel: 'Affirm',
+        }}
+      />
+      <Tab.Screen
+        name="ActionPlanner"
+        component={ActionPlannerScreen}
+        options={{
+          title: 'Action Planner',
+          tabBarLabel: 'Plan',
         }}
       />
       <Tab.Screen
@@ -254,6 +280,14 @@ const AppNavigator = () => {
             <Stack.Screen
               name="MindfulMoment"
               component={MindfulMomentScreen}
+              options={{
+                animation: 'slide_from_bottom',
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen
+              name="PremiumUpgrade"
+              component={PremiumUpgradeScreen}
               options={{
                 animation: 'slide_from_bottom',
                 presentation: 'modal',

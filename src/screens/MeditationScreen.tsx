@@ -52,7 +52,10 @@ const MeditationScreen = () => {
       Alert.alert(
         'Premium Content',
         'This meditation requires a Premium subscription. Upgrade to access all soul journeys.',
-        [{ text: 'OK' }]
+        [
+          { text: 'Not Now', style: 'cancel' },
+          { text: 'Upgrade', onPress: () => (navigation as any).navigate('PremiumUpgrade') }
+        ]
       );
       return;
     }
@@ -84,17 +87,25 @@ const MeditationScreen = () => {
         />
 
         {!profile?.isPremium && (
-          <Card style={styles.premiumBanner}>
-            <LinearGradient
-              colors={[COLORS.secondary + '20', COLORS.primary + '20']}
-              style={styles.premiumGradient}
-            >
-              <Ionicons name="star" size={24} color={COLORS.secondary} />
-              <Text style={styles.premiumText}>
-                Free: 3 QHHT-inspired meditations • Premium: All {tracks.length} soul journeys
-              </Text>
-            </LinearGradient>
-          </Card>
+          <TouchableOpacity onPress={() => (navigation as any).navigate('PremiumUpgrade')}>
+            <Card style={styles.premiumBanner}>
+              <LinearGradient
+                colors={[COLORS.secondary + '20', COLORS.primary + '20']}
+                style={styles.premiumGradient}
+              >
+                <View style={styles.premiumContent}>
+                  <Ionicons name="star" size={24} color={COLORS.secondary} />
+                  <Text style={styles.premiumText}>
+                    Free: 3 meditations • Premium: All {tracks.length} soul journeys
+                  </Text>
+                </View>
+                <View style={styles.upgradeButton}>
+                  <Text style={styles.upgradeText}>Upgrade</Text>
+                  <Ionicons name="arrow-forward" size={16} color={COLORS.secondary} />
+                </View>
+              </LinearGradient>
+            </Card>
+          </TouchableOpacity>
         )}
 
         <Card style={styles.infoCard}>
@@ -219,13 +230,35 @@ const styles = StyleSheet.create({
   premiumGradient: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: SPACING.md,
     padding: SPACING.md,
   },
+  premiumContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    flex: 1,
+  },
   premiumText: {
-    fontSize: SIZES.font.md,
+    fontSize: SIZES.font.sm,
     color: COLORS.text,
     fontWeight: '600',
+    flex: 1,
+  },
+  upgradeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: COLORS.secondary + '20',
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    borderRadius: 8,
+  },
+  upgradeText: {
+    fontSize: SIZES.font.sm,
+    color: COLORS.secondary,
+    fontWeight: 'bold',
   },
   infoCard: {
     flexDirection: 'row',

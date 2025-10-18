@@ -14,7 +14,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.soulsync.app"
+      "bundleIdentifier": "com.soulsync.app",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "SoulSync needs access to your calendar to sync inspired action tasks and help you manifest your visions.",
+        "NSMicrophoneUsageDescription": "SoulSync needs access to your microphone to record personalized affirmations in your own voice."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +26,12 @@
         "backgroundColor": "#0F172A"
       },
       "package": "com.soulsync.app",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
