@@ -1,5 +1,5 @@
-// MeditationPlayerScreen.tsx - Soul Remembrance Meditation with Audio Player
-import React, { useState, useEffect } from 'react';
+// MeditationPlayerScreen.tsx - Enhanced Soul Remembrance Meditation with Audio Player
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +17,7 @@ import GradientBackground from '../components/GradientBackground';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
 import AudioService, { AudioTrack } from '../services/AudioService';
 import StorageService from '../services/StorageService';
+import MeditationScriptService from '../services/MeditationScriptService';
 
 interface MeditationPlayerScreenProps {
   route: {
@@ -36,13 +38,63 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
   const [position, setPosition] = useState(0);
   const [duration, setDuration] = useState(track.duration * 1000);
   const [volume, setVolume] = useState(1.0);
+  const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [isRepeat, setIsRepeat] = useState(false);
+  const [useTTS, setUseTTS] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
+  // Animation refs
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     loadAudio();
+    checkForTTSScript();
     return () => {
       AudioService.unload();
+      AudioService.stopSpeech();
     };
   }, []);
+
+  // Pulsing animation when playing
+  useEffect(() => {
+    if (isPlaying || isSpeaking) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, {
+            toValue: 1.2,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulseAnim, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+
+      // Gentle rotation
+      Animated.loop(
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 20000,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      pulseAnim.setValue(1);
+      rotateAnim.setValue(0);
+    }
+  }, [isPlaying, isSpeaking]);
+
+  const checkForTTSScript = () => {
+    // Check if this track has a TTS script available
+    const script = MeditationScriptService.getScriptById(`script_${track.id}`);
+    if (script) {
+      setUseTTS(true);
+    }
+  };
 
   const loadAudio = async () => {
     try {
@@ -80,20 +132,71 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
     await AudioService.seekTo(value);
   };
 
+  const handlePlayTTS = async () => {
+    const script = MeditationScriptService.getScriptById(`script_${track.id}`);
+    if (!script) {
+      Alert.alert('Script Not Available', 'This meditation does not have a guided script yet.');
+      return;
+    }
+
+    setIsSpeaking(true);
+    setIsPlaying(false); // Pause audio if playing
+
+    try {
+      await AudioService.speakText(script.script, {
+        ...script.ttsOptions,
+        onStart: () => setIsSpeaking(true),
+        onDone: () => {
+          setIsSpeaking(false);
+          handleComplete();
+        },
+        onError: (error) => {
+          console.error('TTS Error:', error);
+          setIsSpeaking(false);
+          Alert.alert('TTS Error', 'Could not play guided meditation. Try audio mode instead.');
+        },
+      });
+    } catch (error) {
+      console.error('Error starting TTS:', error);
+      setIsSpeaking(false);
+    }
+  };
+
+  const handleRateChange = async (rate: number) => {
+    setPlaybackRate(rate);
+    // Note: Implement rate change in AudioService if needed
+  };
+
   const handleComplete = async () => {
     const minutes = Math.round(track.duration / 60);
     await StorageService.incrementSession(minutes);
+
+    const profile = await StorageService.getUserProfile();
+    const totalSessions = profile?.stats.totalSessions || 0;
+    const totalMinutes = profile?.stats.totalMinutes || 0;
+
+    const journalPrompt = MeditationScriptService.getJournalPrompt(`script_${track.id}`);
+
     Alert.alert(
-      'Session Complete',
-      'Your soul journey has reached its destination. Would you like to journal about your experience?',
+      '🌟 Session Complete',
+      `Beautiful work, soul seeker!\n\nYou've completed ${totalSessions} sessions for a total of ${totalMinutes} minutes of soul connection.\n\n${journalPrompt}`,
       [
-        { text: 'Not Now', onPress: () => navigation.goBack() },
+        { text: 'Done', style: 'cancel', onPress: () => navigation.goBack() },
         {
-          text: 'Journal',
-          onPress: () => navigation.navigate('Journal'),
+          text: 'Journal Now',
+          onPress: () => navigation.navigate('Journal', {
+            prompt: journalPrompt,
+            meditationId: track.id,
+          }),
         },
       ]
     );
+
+    if (isRepeat && !isSpeaking) {
+      // Restart if repeat is enabled
+      await AudioService.stop();
+      await AudioService.play();
+    }
   };
 
   const formatTime = (millis: number): string => {
@@ -128,20 +231,34 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
 
         <View style={styles.content}>
           <View style={styles.visualizer}>
-            <LinearGradient
-              colors={[COLORS.primary, COLORS.tertiary, COLORS.accent]}
-              style={styles.visualizerGradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+            <Animated.View
+              style={{
+                transform: [
+                  { scale: pulseAnim },
+                  {
+                    rotate: rotateAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0deg', '360deg'],
+                    }),
+                  },
+                ],
+              }}
             >
-              <View style={styles.soulIcon}>
-                <Ionicons
-                  name={isPlaying ? 'radio-outline' : 'pause-circle-outline'}
-                  size={120}
-                  color={COLORS.white + '60'}
-                />
-              </View>
-            </LinearGradient>
+              <LinearGradient
+                colors={[COLORS.primary, COLORS.tertiary, COLORS.accent]}
+                style={styles.visualizerGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                <View style={styles.soulIcon}>
+                  <Ionicons
+                    name={isPlaying || isSpeaking ? 'radio-outline' : 'pause-circle-outline'}
+                    size={120}
+                    color={COLORS.white + '60'}
+                  />
+                </View>
+              </LinearGradient>
+            </Animated.View>
           </View>
 
           <View style={styles.info}>
@@ -202,6 +319,61 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
               <Ionicons name="play-forward" size={32} color={COLORS.text} />
               <Text style={styles.controlLabel}>15s</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Enhanced Controls */}
+          <View style={styles.enhancedControls}>
+            {useTTS && (
+              <TouchableOpacity
+                style={[styles.enhancedButton, isSpeaking && styles.enhancedButtonActive]}
+                onPress={isSpeaking ? () => AudioService.stopSpeech() : handlePlayTTS}
+              >
+                <Ionicons
+                  name="mic"
+                  size={20}
+                  color={isSpeaking ? COLORS.secondary : COLORS.text}
+                />
+                <Text style={[styles.enhancedButtonText, isSpeaking && styles.enhancedButtonTextActive]}>
+                  {isSpeaking ? 'Stop Guide' : 'Voice Guide'}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity
+              style={[styles.enhancedButton, isRepeat && styles.enhancedButtonActive]}
+              onPress={() => setIsRepeat(!isRepeat)}
+            >
+              <Ionicons
+                name="repeat"
+                size={20}
+                color={isRepeat ? COLORS.secondary : COLORS.text}
+              />
+              <Text style={[styles.enhancedButtonText, isRepeat && styles.enhancedButtonTextActive]}>
+                Repeat
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.speedControl}>
+              {[0.75, 1.0, 1.25].map((rate) => (
+                <TouchableOpacity
+                  key={rate}
+                  style={[
+                    styles.speedButton,
+                    playbackRate === rate && styles.speedButtonActive,
+                  ]}
+                  onPress={() => handleRateChange(rate)}
+                >
+                  <Text
+                    style={[
+                      styles.speedButtonText,
+                      playbackRate === rate && styles.speedButtonTextActive,
+                    ]}
+                  >
+                    {rate}x
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
 
           <View style={styles.footer}>
@@ -372,6 +544,61 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     lineHeight: 20,
     fontStyle: 'italic',
+  },
+  enhancedControls: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
+    flexWrap: 'wrap',
+  },
+  enhancedButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    backgroundColor: COLORS.surface,
+    borderRadius: SIZES.radius.md,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  enhancedButtonActive: {
+    borderColor: COLORS.secondary,
+    backgroundColor: COLORS.secondary + '20',
+  },
+  enhancedButtonText: {
+    fontSize: SIZES.font.sm,
+    color: COLORS.text,
+    fontWeight: '600',
+  },
+  enhancedButtonTextActive: {
+    color: COLORS.secondary,
+  },
+  speedControl: {
+    flexDirection: 'row',
+    gap: SPACING.xs,
+  },
+  speedButton: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: SPACING.xs,
+    backgroundColor: COLORS.surface,
+    borderRadius: SIZES.radius.sm,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  speedButtonActive: {
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.primary + '20',
+  },
+  speedButtonText: {
+    fontSize: SIZES.font.xs,
+    color: COLORS.textSecondary,
+    fontWeight: '600',
+  },
+  speedButtonTextActive: {
+    color: COLORS.primary,
   },
 });
 

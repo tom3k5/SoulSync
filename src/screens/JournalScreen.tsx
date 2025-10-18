@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
+import JournalExportService from '../services/JournalExportService';
 
 interface JournalEntry {
   id: string;
@@ -72,6 +73,35 @@ const JournalScreen = () => {
 
   const handleCloseEntry = () => {
     setSelectedEntry(null);
+  };
+
+  const handleExportPDF = async () => {
+    if (entries.length === 0) {
+      Alert.alert('No Entries', 'You need to create some journal entries before exporting.');
+      return;
+    }
+
+    const summary = JournalExportService.getExportSummary(entries);
+
+    Alert.alert(
+      'Export Journal as PDF',
+      summary,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Export',
+          onPress: async () => {
+            try {
+              await JournalExportService.exportToPDF(entries);
+              Alert.alert('Success!', 'Your soul journey has been exported as PDF.');
+            } catch (error) {
+              console.error('Export error:', error);
+              Alert.alert('Export Failed', 'Could not export journal. Please try again.');
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (selectedEntry) {
@@ -146,11 +176,16 @@ const JournalScreen = () => {
       <View style={styles.container}>
         <View style={styles.topHeader}>
           <Text style={styles.pageTitle}>Journal</Text>
-          <Button
-            title="New Entry"
-            onPress={() => setShowNewEntry(true)}
-            variant="primary"
-          />
+          <View style={styles.headerButtons}>
+            <TouchableOpacity style={styles.exportButton} onPress={handleExportPDF}>
+              <Ionicons name="download-outline" size={24} color={COLORS.secondary} />
+            </TouchableOpacity>
+            <Button
+              title="New Entry"
+              onPress={() => setShowNewEntry(true)}
+              variant="primary"
+            />
+          </View>
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -192,6 +227,19 @@ const styles = StyleSheet.create({
     fontSize: SIZES.font.xxl,
     fontWeight: 'bold',
     color: COLORS.text,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+  },
+  exportButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: COLORS.secondary + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
