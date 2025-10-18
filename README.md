@@ -19,23 +19,28 @@ A spiritual manifestation mobile app inspired by Dolores Cannon's Quantum Healin
 ### Implemented ✅
 
 - **QHHT-Inspired Onboarding** - 4 beautiful slides introducing soul consciousness and quantum realities
-- **Soul Remembrance Meditation** - 5 guided meditation tracks with full audio player
+- **Soul Remembrance Meditation** - 8 guided meditation tracks with full audio player
+- **QHHT Meditation Scripts** - 5 complete guided meditation scripts with TTS narration
+- **Animated Meditation Player** - Pulsing visualizer with 60fps native animations
+- **Playback Controls** - Speed controls (0.75x, 1.0x, 1.25x), repeat/loop, TTS voice guidance
 - **Parallel World Visualization** - Create vision boards with 68-second manifestation timer
 - **Daily Affirmations** - 15 Dolores Cannon-inspired messages with notifications
 - **Affirmation Weaver** - Record custom affirmations in your own voice with expo-av
 - **Inspired Action Planner** - Auto-generate tasks from vision boards with calendar sync
+- **Journal with PDF Export** - Beautiful PDF export with professional formatting and sharing
+- **Session Stats** - Post-meditation completion stats and journal prompts
 - **Premium Upgrade Screen** - Beautiful in-app subscription flow with feature showcase
 - **Streak Tracking** - Monitor your daily practice and progress
 - **Cosmic Theme** - Deep space design with soul gold and serenity blue colors
-- **6 Bottom Tabs** - Home, Meditate, Affirm, Plan, Visualize, Journal, Profile
+- **7 Bottom Tabs** - Home, Meditate, Affirm, Plan, Visualize, Journal, Profile
 
 ### Coming Soon 🚧
 
 - Sacred Space customization
-- Journal PDF export
 - Real in-app purchases (RevenueCat integration)
 - Cloud backup sync
 - AI-powered affirmation generation
+- Lottie animations for affirmation recording
 
 ## 🚀 Quick Start
 
@@ -93,13 +98,18 @@ SoulSync/
 │   │   ├── ProfileScreen.tsx
 │   │   └── PremiumUpgradeScreen.tsx    # NEW - IAP flow
 │   └── services/            # Business logic
-│       ├── StorageService.ts      # AsyncStorage wrapper
-│       ├── AudioService.ts        # Audio playback/recording
-│       └── NotificationService.ts # Daily reminders
+│       ├── StorageService.ts           # AsyncStorage wrapper
+│       ├── AudioService.ts             # Audio playback/recording/TTS
+│       ├── NotificationService.ts      # Daily reminders
+│       ├── MeditationScriptService.ts  # QHHT meditation scripts
+│       └── JournalExportService.ts     # PDF generation
 ├── assets/
 │   ├── demo/                # Demo GIF for README
 │   └── audio/               # Meditation tracks
-└── README.md
+├── README.md                # This file
+├── API_REFERENCE.md         # Complete API documentation
+├── ARCHITECTURE.md          # Architecture details
+└── CONTRIBUTING.md          # Development guidelines
 ```
 
 ## 🎨 Theme Colors
@@ -153,15 +163,19 @@ await NotificationService.scheduleDailyAffirmation({
 - `expo` ~54.0.13 - React Native framework
 - `@react-native-async-storage/async-storage` - Local storage
 - `expo-av` - Audio playback & recording (affirmations)
+- `expo-speech` - Text-to-speech for QHHT guided meditations
+- `expo-print` - PDF generation for journal export
+- `expo-file-system` - File operations
+- `expo-sharing` - Native share sheet
 - `expo-calendar` - Calendar sync for action planner
 - `expo-notifications` - Push notifications
 - `expo-image-picker` - Image selection
 - `expo-linear-gradient` - Gradient UI
 - `expo-haptics` - Tactile feedback
-- `expo-speech` - Text-to-speech for QHHT guide
 - `@react-navigation/native` - Navigation
 - `@react-navigation/bottom-tabs` - Tab navigation
-- Plus 8 more supporting packages
+- `react-native-reanimated` - 60fps animations
+- Plus 10 more supporting packages
 
 ## 🎯 Navigation
 
@@ -257,10 +271,12 @@ export const COLORS = {
 ## 🎓 Architecture
 
 - **Service Layer Pattern** - Business logic separated from UI
-- **TypeScript** - Full type safety
+- **TypeScript** - Full type safety with strict mode
 - **Centralized Theme** - Single source of truth for design
 - **Component Composition** - Reusable UI components
 - **Error Handling** - Graceful async operation handling
+
+For detailed architecture information, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## 🌟 Spiritual Design
 
@@ -272,16 +288,40 @@ This app uses soul-centered language throughout:
 
 ## 📊 Progress
 
-**~85% Core Features Complete**
+**~92% Core Features Complete**
 
-✅ Services, meditation, affirmations, action planner, vision boards, onboarding, premium UI
-🚧 Real IAP integration, cloud sync, PDF export, unit tests
+✅ Services, meditation with TTS, animated player, affirmations, action planner, vision boards, journal PDF export, onboarding, premium UI
+🚧 Real IAP integration, cloud sync, unit tests, Lottie animations
+
+## 📚 Documentation
+
+- **[README.md](README.md)** - Project overview (this file)
+- **[API_REFERENCE.md](API_REFERENCE.md)** - Complete API documentation for all services
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture and design patterns
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines and contribution process
+- **[MEDITATION_ENHANCEMENT_PLAN.md](MEDITATION_ENHANCEMENT_PLAN.md)** - Meditation feature planning
+- **[FEATURE_ENHANCEMENTS_COMPLETE.md](FEATURE_ENHANCEMENTS_COMPLETE.md)** - Implementation summary
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+**Quick Start for Contributors:**
+```bash
+git clone https://github.com/YOUR_USERNAME/SoulSync.git
+cd SoulSync
+npm install
+npm start
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed development workflow, coding standards, and commit conventions.
 
 ## 🙏 Credits
 
 - **Inspiration**: Dolores Cannon's QHHT methodology
 - **Framework**: React Native, Expo
 - **Icons**: @expo/vector-icons (Ionicons)
+- **Contributors**: All souls who have contributed to this journey
 
 ## 📄 License
 
