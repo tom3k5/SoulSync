@@ -304,7 +304,7 @@ const VisionBoardScreen = () => {
                 >
                   <Ionicons name="eye" size={20} color={COLORS.white} />
                   <Text style={styles.focusButtonText}>
-                    {isFocusing ? `Focusing... ${focusTimer}s` : '68-Second Focus'}
+                    {isFocusing ? `Focusing... ${focusTimer}s` : 'Start Focus'}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>

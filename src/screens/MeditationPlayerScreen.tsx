@@ -143,7 +143,7 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
     setIsPlaying(false); // Pause audio if playing
 
     try {
-      await AudioService.speakText(script.script, {
+      await AudioService.speakTextPremium(script.script, undefined, {
         ...script.ttsOptions,
         onStart: () => setIsSpeaking(true),
         onDone: () => {
@@ -276,9 +276,20 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
 
           <View style={styles.progressSection}>
             <View style={styles.progressBar}>
-              <View style={styles.progressTrack}>
-                <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
-              </View>
+              <TouchableOpacity
+                style={styles.progressTrackTouchable}
+                onPress={(event) => {
+                  const { locationX } = event.nativeEvent;
+                  const trackWidth = 300; // Approximate width, could be measured for precision
+                  const seekProgress = Math.max(0, Math.min(1, locationX / trackWidth));
+                  handleSeek(seekProgress * duration);
+                }}
+                activeOpacity={1}
+              >
+                <View style={styles.progressTrack}>
+                  <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+                </View>
+              </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.progressThumb, { left: `${progress * 100}%` }]}
                 onPressIn={() => {}}
@@ -471,6 +482,10 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     paddingHorizontal: SPACING.md,
+  },
+  progressTrackTouchable: {
+    height: 40,
+    justifyContent: 'center',
   },
   progressTrack: {
     height: 4,

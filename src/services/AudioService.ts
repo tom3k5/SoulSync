@@ -1,7 +1,9 @@
-// AudioService.ts - Manages meditation audio playback and soundscapes
 import { Audio, AVPlaybackStatus } from 'expo-av';
 import { Sound } from 'expo-av/build/Audio';
 import * as Speech from 'expo-speech';
+import * as FileSystem from 'expo-file-system';
+// Premium TTS using ElevenLabs API for natural voice guidance
+const ELEVENLABS_API_KEY = process.env.EXPO_PUBLIC_ELEVENLABS_KEY || null;
 
 export interface AudioTrack {
   id: string;
@@ -151,47 +153,52 @@ class AudioService {
       {
         id: 'script_qhht_induction',
         title: 'QHHT Induction & Soul Remembrance',
-        duration: 600, // 10 minutes
+        duration: 300, // 5 minutes - adjusted to match 528 Hz tone
         isPremium: false,
         category: 'meditation',
+        frequency: '528 Hz',
         description: 'Traditional QHHT countdown induction (10-1) followed by soul remembrance visualization. Connect with your eternal soul essence through Dolores Cannon\'s proven methodology.',
-        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Placeholder
+        uri: require('../../assets/audio/soul_remembrance.mp3'),
       },
       {
         id: 'script_quantum_field',
         title: 'Quantum Field & Divine Source Connection',
-        duration: 900, // 15 minutes
+        duration: 300, // 5 minutes - adjusted to match 432 Hz tone
         isPremium: false,
         category: 'meditation',
+        frequency: '432 Hz',
         description: 'Journey through parallel realities and connect with divine source energy. Based on QHHT concepts of infinite consciousness and the quantum nature of reality.',
-        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Placeholder
+        uri: require('../../assets/audio/quantum_field.mp3'),
       },
       {
         id: 'script_past_life',
         title: 'QHHT Past Life Regression',
-        duration: 1200, // 20 minutes
+        duration: 300, // 5 minutes
         isPremium: true,
         category: 'meditation',
+        frequency: '417 Hz',
         description: 'Complete QHHT past life regression protocol: Life selection, full immersion, higher soul purpose insight, return to present with wisdom. Experience life between lives and soul lessons.',
-        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // Placeholder
+        uri: require('../../assets/audio/past_life.mp3'),
       },
       {
         id: 'script_higher_self',
         title: 'QHHT Higher Self / Subconscious Communication',
-        duration: 900, // 15 minutes
+        duration: 300, // 5 minutes
         isPremium: true,
         category: 'meditation',
+        frequency: '741 Hz',
         description: 'Connect directly with your higher self using QHHT protocol. Receive guidance, answers, and profound wisdom from the aspect of you that knows everything.',
-        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Placeholder
+        uri: require('../../assets/audio/higher_self.mp3'),
       },
       {
         id: 'script_body_scan',
         title: 'QHHT Body Scanning & Theta Healing',
-        duration: 1800, // 30 minutes
+        duration: 300, // 5 minutes
         isPremium: true,
         category: 'meditation',
+        frequency: '528 Hz',
         description: 'Complete body scan protocol followed by theta state healing. Clear energy blockages, release trapped emotions, accelerate healing. Includes Council of Elders connection.',
-        uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', // Placeholder
+        uri: require('../../assets/audio/body_scan.mp3'),
       },
       {
         id: 'med_6',
@@ -380,6 +387,109 @@ class AudioService {
 
   clearSpeechCallback(): void {
     this.currentSpeechCallback = null;
+  }
+
+  // Premium TTS using ElevenLabs API for natural, comfortable listening experience
+  private premiumTtsSound: Audio.Sound | null = null;
+
+  async speakTextPremium(
+    text: string,
+    voiceId = '21m00Tcm4TlvDq8ikWAM', // Rachel - natural female voice for meditation
+    options: {
+      onStart?: () => void;
+      onDone?: () => void;
+      onError?: (error: any) => void;
+    } = {}
+  ): Promise<void> {
+    if (!ELEVENLABS_API_KEY) {
+      console.warn('ElevenLabs API key not found, falling back to system TTS');
+      return this.speakText(text, { ...options as any });
+    }
+
+    try {
+      // Clean up any previous premium TTS
+      if (this.premiumTtsSound) {
+        await this.premiumTtsSound.unloadAsync();
+        this.premiumTtsSound = null;
+      }
+
+      this.isSpeaking = true;
+      options.onStart?.();
+      this.currentSpeechCallback?.(true);
+
+      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'Accept': 'audio/mpeg',
+          'Content-Type': 'application/json',
+          'xi-api-key': ELEVENLABS_API_KEY,
+        },
+        body: JSON.stringify({
+          text,
+          model_id: 'eleven_monolingual_v1',
+          voice_settings: {
+            stability: 0.71,
+            similarity_boost: 0.5,
+            style: 0.0,
+            use_speaker_boost: true,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`ElevenLabs API error: ${response.status}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+
+      // Save audio to app documents directory
+      const uri = `${(FileSystem as any).documentDirectory}premium_tts_${Date.now()}.mp3`;
+      await FileSystem.writeAsStringAsync(uri, this.arrayBufferToBase64(arrayBuffer), {
+        encoding: 'base64',
+      });
+
+      // Create and play sound
+      const { sound } = await Audio.Sound.createAsync({ uri });
+      this.premiumTtsSound = sound;
+
+      await sound.playAsync();
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.isLoaded && status.didJustFinish) {
+          this.cleanupPremiumTts();
+          options.onDone?.();
+        }
+      });
+
+    } catch (error) {
+      console.error('Premium TTS error:', error);
+      this.cleanupPremiumTts();
+      options.onError?.(error);
+      // Fallback to system TTS
+      await this.speakText(text, { ...options as any });
+    }
+  }
+
+  private cleanupPremiumTts() {
+    if (this.premiumTtsSound) {
+      this.premiumTtsSound.unloadAsync().catch(console.error);
+      this.premiumTtsSound = null;
+    }
+    this.isSpeaking = false;
+    this.currentSpeechCallback?.(false);
+  }
+
+  private arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (const byte of bytes) {
+      binary += String.fromCharCode(byte);
+    }
+    return btoa(binary);
+  }
+
+  stopPremiumTts(): void {
+    this.cleanupPremiumTts();
   }
 
   // Get available voices

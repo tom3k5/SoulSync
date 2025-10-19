@@ -10,9 +10,9 @@ A spiritual manifestation mobile app inspired by Dolores Cannon's Quantum Healin
 
 ## 🎬 Demo
 
-![SoulSync Vision Board](assets/demo/vision-board-demo.gif)
+![SoulSync Vision Board](https://raw.githubusercontent.com/tom3k5/SoulSync/main/assets/demo/vision-board-demo.gif)
 
-*Visualize your desires in a parallel world with a 68-second focus timer. (Demo GIF coming soon - run the app to experience it live!)*
+*Visualize your desires in a parallel world with a 68-second focus timer. Share in issues to contribute your demo!*
 
 ## ✨ Features
 
