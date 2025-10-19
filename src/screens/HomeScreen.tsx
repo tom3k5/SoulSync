@@ -25,9 +25,9 @@ const HomeScreen = () => {
   const randomAffirmation = dailyAffirmations[Math.floor(Math.random() * dailyAffirmations.length)];
 
   const quickActions = [
-    { id: '1', title: 'Daily Meditation', icon: 'sparkles', color: COLORS.primary, route: 'Meditation' },
+    { id: '1', title: 'Daily Meditation', icon: 'sparkles', color: COLORS.primary, route: 'Journeys' },
     { id: '2', title: 'Soul Journal', icon: 'book', color: COLORS.secondary, route: 'Journal' },
-    { id: '3', title: 'Breathing Exercise', icon: 'water', color: COLORS.success, route: 'BreathingExercise' },
+    { id: '3', title: 'Breathing Exercise', icon: 'water', color: COLORS.success, route: 'Breathe' },
     { id: '4', title: 'Mindful Moment', icon: 'leaf', color: COLORS.tertiary, route: 'MindfulMoment' },
   ];
 

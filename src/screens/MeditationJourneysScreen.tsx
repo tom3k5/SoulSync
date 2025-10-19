@@ -44,7 +44,11 @@ const MeditationJourneysScreen = () => {
       return;
     }
 
-    (navigation as any).navigate('MeditationPlayer', { track });
+    // Pass ONLY trackId for web compatibility
+    // React Navigation on web cannot serialize complex objects to URL
+    (navigation as any).navigate('MeditationPlayer', {
+      trackId: track.id,
+    });
   };
 
   const renderTrackCard = (track: AudioTrack) => (

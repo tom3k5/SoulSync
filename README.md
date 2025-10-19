@@ -25,8 +25,19 @@ A spiritual manifestation mobile app inspired by Dolores Cannon's Quantum Healin
 - **Layered Soundscapes** - Rich audio with binaural beats, harmonics, and ambient backgrounds
 - **Solfeggio Frequencies** - 396 Hz, 417 Hz, 432 Hz, 528 Hz, 741 Hz for healing and transformation
 - **Theta Brainwave Entrainment** - 5-6 Hz binaural beats for deep meditation states
-- **Animated Meditation Player** - Pulsing visualizer with 60fps native animations
-- **Playback Controls** - Speed controls (0.75x, 1.0x, 1.25x), repeat/loop, natural voice guidance
+- **Cosmic Meditation Player** - Masterpiece experience with pulsating visualizer (360px)
+  - 60fps animations with react-native-reanimated
+  - Frequency-based color mapping (528Hz gold/green, 432Hz cyan, etc.)
+  - Multi-layer pulsing rings synchronized to healing frequencies
+  - Gradient progress bars with interactive seeking
+  - Volume control with animated slider
+  - Large play button (96px) with spring animations
+  - Haptic feedback on all interactions (iOS/Android)
+  - Voice guide toggle for TTS narration
+  - Repeat mode for continuous meditation
+  - Session completion with stats and journal prompts
+  - Scrollable layout for all screen sizes
+  - Full audio playback with expo-av integration
 - **Breathing Exercise** - Box breathing (4-7-8) with calming music and voice guidance
 - **Parallel World Visualization** - Create vision boards with 68-second manifestation timer
 - **Daily Affirmations** - 15 Dolores Cannon-inspired messages with notifications
@@ -349,6 +360,13 @@ export const COLORS = {
 - Ensure `babel.config.js` exists with proper configuration
 - Run with cache cleared: `npm run clear -- --web`
 
+**Meditation player showing blank screen?**
+- This was caused by React Hooks violation (useAnimatedStyle after conditional return)
+- Fixed by moving all hooks to top level of component
+- Ensure trackId is passed via navigation (not full track object for web compatibility)
+- Check browser console for "Rules of Hooks" errors
+- See [MEDITATION_PLAYER_GUIDE.md](MEDITATION_PLAYER_GUIDE.md) for details
+
 ## 🎓 Architecture
 
 - **Service Layer Pattern** - Business logic separated from UI
@@ -380,6 +398,9 @@ This app uses soul-centered language throughout:
 - **[API_REFERENCE.md](API_REFERENCE.md)** - Complete API documentation for all services
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** - Detailed architecture and design patterns
 - **[CONTRIBUTING.md](CONTRIBUTING.md)** - Development guidelines and contribution process
+- **[SUBAGENTS_GUIDE.md](SUBAGENTS_GUIDE.md)** - AI subagent team guide for development
+- **[NAVIGATION_GUIDE.md](NAVIGATION_GUIDE.md)** - World-class navigation system guide
+- **[MEDITATION_PLAYER_GUIDE.md](MEDITATION_PLAYER_GUIDE.md)** - Complete meditation player documentation
 - **[MEDITATION_ENHANCEMENT_PLAN.md](MEDITATION_ENHANCEMENT_PLAN.md)** - Meditation feature planning
 - **[FEATURE_ENHANCEMENTS_COMPLETE.md](FEATURE_ENHANCEMENTS_COMPLETE.md)** - Implementation summary
 

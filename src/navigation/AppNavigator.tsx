@@ -1,5 +1,9 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useRef, useCallback } from 'react';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+  DefaultTheme,
+} from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,6 +12,7 @@ import * as Haptics from 'expo-haptics';
 
 import { useUser } from '../contexts/UserContext';
 import { COLORS } from '../constants/theme';
+import CustomTabBar from '../components/CustomTabBar';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -41,7 +46,8 @@ export type RootStackParamList = {
     type: string;
   };
   MeditationPlayer: {
-    track: any;
+    track?: any;      // Optional for backwards compatibility
+    trackId?: string; // Preferred for web - serializable
   };
   VisionBoard: undefined;
   BreathingExercise: undefined;
@@ -66,54 +72,25 @@ export type MainTabParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
+// Custom navigation theme with cosmic colors
+const CosmicTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: COLORS.primary,
+    background: COLORS.background,
+    card: COLORS.surface,
+    text: COLORS.text,
+    border: COLORS.primary + '20',
+    notification: COLORS.secondary,
+  },
+};
+
 const MainTabs = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Journeys') {
-            iconName = focused ? 'planet' : 'planet-outline';
-          } else if (route.name === 'Soundscapes') {
-            iconName = focused ? 'radio' : 'radio-outline';
-          } else if (route.name === 'Breathe') {
-            iconName = focused ? 'water' : 'water-outline';
-          } else if (route.name === 'SoulTools') {
-            iconName = focused ? 'apps' : 'apps-outline';
-          } else if (route.name === 'Profile') {
-            iconName = focused ? 'person' : 'person-outline';
-          } else {
-            iconName = 'help-outline';
-          }
-
-          return <Ionicons name={iconName} size={focused ? size + 2 : size} color={color} />;
-        },
-        tabBarActiveTintColor: COLORS.secondary,
-        tabBarInactiveTintColor: COLORS.textSecondary + '80',
-        tabBarStyle: {
-          backgroundColor: COLORS.surface,
-          borderTopWidth: 1,
-          borderTopColor: COLORS.primary + '20',
-          paddingBottom: Platform.OS === 'ios' ? 20 : 8,
-          paddingTop: 12,
-          height: Platform.OS === 'ios' ? 88 : 65,
-          elevation: 8,
-          shadowColor: COLORS.primary,
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-          marginTop: 4,
-        },
-        tabBarItemStyle: {
-          paddingVertical: 4,
-        },
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{
         headerStyle: {
           backgroundColor: COLORS.background,
           elevation: 0,
@@ -126,14 +103,8 @@ const MainTabs = () => {
           fontSize: 20,
         },
         headerShown: false, // Hide headers for cleaner look
-      })}
-      screenListeners={{
-        tabPress: () => {
-          // Add haptic feedback on tab press
-          if (Platform.OS !== 'web') {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          }
-        },
+        // Smooth animations
+        animation: 'shift',
       }}
     >
       <Tab.Screen
@@ -220,9 +191,67 @@ const MainTabs = () => {
 const AppNavigator = () => {
   const { isAuthenticated } = useUser();
   const [isOnboardingComplete, setIsOnboardingComplete] = React.useState(true); // Set to false for onboarding
+  const navigationRef = useNavigationContainerRef();
+  const routeNameRef = useRef<string>();
+
+  // Navigation state change handler for analytics and deep linking
+  const onStateChange = useCallback(() => {
+    const previousRouteName = routeNameRef.current;
+    const currentRouteName = navigationRef.current?.getCurrentRoute()?.name;
+
+    if (previousRouteName !== currentRouteName) {
+      // Analytics tracking could go here
+      console.log('Navigation:', previousRouteName, '->', currentRouteName);
+
+      // Haptic feedback on navigation
+      if (Platform.OS !== 'web' && currentRouteName) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+    }
+
+    // Save the current route name for next change
+    routeNameRef.current = currentRouteName;
+  }, []);
+
+  // Deep linking configuration
+  const linking = {
+    prefixes: ['soulsync://', 'https://soulsync.app'],
+    config: {
+      screens: {
+        Onboarding: 'onboarding',
+        Login: 'login',
+        MainTabs: {
+          screens: {
+            Home: 'home',
+            Journeys: 'journeys',
+            Soundscapes: 'soundscapes',
+            Breathe: 'breathe',
+            SoulTools: 'tools',
+            Profile: 'profile',
+            Journal: 'journal',
+            Affirmations: 'affirmations',
+            ActionPlanner: 'planner',
+            VisionBoard: 'vision-board',
+          },
+        },
+        // Note: MeditationPlayer and other modals intentionally excluded from deep linking
+        // They pass complex objects (AudioTrack) that cannot be serialized to URL
+        // Access these screens only through internal navigation
+        PremiumUpgrade: 'premium',
+      },
+    },
+  };
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      theme={CosmicTheme}
+      linking={linking}
+      onReady={() => {
+        routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name;
+      }}
+      onStateChange={onStateChange}
+    >
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
