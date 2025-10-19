@@ -13,7 +13,7 @@ export interface AudioTrack {
   category: 'meditation' | 'soundscape' | 'affirmation' | 'guidance';
   frequency?: string; // e.g., '528 Hz'
   description?: string;
-  uri: string; // local asset or bundled file
+  uri: string | number; // local asset (require() returns number) or URI string
 }
 
 class AudioService {
@@ -46,8 +46,11 @@ class AudioService {
       this.playbackCallback = onPlaybackUpdate || null;
 
       // Create new sound object
+      // If track.uri is a require() result (number), pass it directly
+      // If it's a string URI, wrap it in an object
+      const source = typeof track.uri === 'number' ? track.uri : { uri: track.uri };
       const { sound } = await Audio.Sound.createAsync(
-        { uri: track.uri },
+        source,
         { shouldPlay: false },
         this.onPlaybackStatusUpdate.bind(this)
       );
