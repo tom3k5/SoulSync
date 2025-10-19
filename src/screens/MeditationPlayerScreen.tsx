@@ -90,7 +90,7 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
 
   const checkForTTSScript = () => {
     // Check if this track has a TTS script available
-    const script = MeditationScriptService.getScriptById(`script_${track.id}`);
+    const script = MeditationScriptService.getScriptById(track.id);
     if (script) {
       setUseTTS(true);
     }
@@ -133,7 +133,7 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
   };
 
   const handlePlayTTS = async () => {
-    const script = MeditationScriptService.getScriptById(`script_${track.id}`);
+    const script = MeditationScriptService.getScriptById(track.id);
     if (!script) {
       Alert.alert('Script Not Available', 'This meditation does not have a guided script yet.');
       return;
@@ -175,7 +175,7 @@ const MeditationPlayerScreen: React.FC<MeditationPlayerScreenProps> = ({
     const totalSessions = profile?.stats.totalSessions || 0;
     const totalMinutes = profile?.stats.totalMinutes || 0;
 
-    const journalPrompt = MeditationScriptService.getJournalPrompt(`script_${track.id}`);
+    const journalPrompt = MeditationScriptService.getJournalPrompt(track.id);
 
     Alert.alert(
       '🌟 Session Complete',

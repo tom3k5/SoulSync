@@ -149,7 +149,7 @@ class AudioService {
   getMeditationTracks(): AudioTrack[] {
     return [
       {
-        id: 'med_1',
+        id: 'script_qhht_induction',
         title: 'QHHT Induction & Soul Remembrance',
         duration: 600, // 10 minutes
         isPremium: false,
@@ -158,7 +158,7 @@ class AudioService {
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Placeholder
       },
       {
-        id: 'med_2',
+        id: 'script_quantum_field',
         title: 'Quantum Field & Divine Source Connection',
         duration: 900, // 15 minutes
         isPremium: false,
@@ -167,7 +167,7 @@ class AudioService {
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', // Placeholder
       },
       {
-        id: 'med_3',
+        id: 'script_past_life',
         title: 'QHHT Past Life Regression',
         duration: 1200, // 20 minutes
         isPremium: true,
@@ -176,7 +176,7 @@ class AudioService {
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', // Placeholder
       },
       {
-        id: 'med_4',
+        id: 'script_higher_self',
         title: 'QHHT Higher Self / Subconscious Communication',
         duration: 900, // 15 minutes
         isPremium: true,
@@ -185,7 +185,7 @@ class AudioService {
         uri: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', // Placeholder
       },
       {
-        id: 'med_5',
+        id: 'script_body_scan',
         title: 'QHHT Body Scanning & Theta Healing',
         duration: 1800, // 30 minutes
         isPremium: true,

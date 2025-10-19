@@ -62,7 +62,11 @@ npm start
 # Run on device
 # Press 'i' for iOS simulator
 # Press 'a' for Android emulator
+# Press 'w' for web browser
 # Scan QR code with Expo Go app on physical device
+
+# Or run directly on web
+npm run web
 ```
 
 ### Enable Onboarding (First Launch)
@@ -256,6 +260,12 @@ export const COLORS = {
 - Check URIs are valid (currently using placeholders)
 - Test on physical device (simulators have audio issues)
 
+**Voice guidance not working during meditation?**
+- Ensure the meditation track has a corresponding script in `MeditationScriptService.ts`
+- Track IDs must match script IDs (e.g., `script_qhht_induction`)
+- Check console logs for TTS initialization errors
+- Grant microphone permissions if needed
+
 **Notifications not appearing?**
 - Grant permissions during onboarding
 - Check device notification settings
@@ -267,6 +277,11 @@ export const COLORS = {
 **App crashes?**
 - Clear cache: `npm start -- --clear`
 - Reinstall: `rm -rf node_modules && npm install`
+
+**Web platform issues?**
+- Install required dependencies: `npm install react-native-worklets react-native-worklets-core @lottiefiles/dotlottie-react babel-preset-expo --legacy-peer-deps`
+- Ensure `babel.config.js` exists with proper configuration
+- Run with cache cleared: `npm run clear -- --web`
 
 ## 🎓 Architecture
 
