@@ -98,14 +98,17 @@ SoulSync/
 │   ├── screens/             # All app screens
 │   │   ├── OnboardingScreen.tsx
 │   │   ├── HomeScreen.tsx
-│   │   ├── MeditationScreen.tsx
+│   │   ├── MeditationJourneysScreen.tsx    # NEW - QHHT meditations
+│   │   ├── SoundscapesScreen.tsx           # NEW - Healing frequencies
+│   │   ├── BreathingExerciseScreen.tsx     # NOW TAB - Breathing exercises
+│   │   ├── SoulToolsScreen.tsx             # NEW - Unified tool hub
 │   │   ├── MeditationPlayerScreen.tsx
-│   │   ├── AffirmationScreen.tsx       # NEW - Voice recording
-│   │   ├── ActionPlannerScreen.tsx     # NEW - Task generation
+│   │   ├── AffirmationScreen.tsx
+│   │   ├── ActionPlannerScreen.tsx
 │   │   ├── VisionBoardScreen.tsx
 │   │   ├── JournalScreen.tsx
 │   │   ├── ProfileScreen.tsx
-│   │   └── PremiumUpgradeScreen.tsx    # NEW - IAP flow
+│   │   └── PremiumUpgradeScreen.tsx
 │   └── services/            # Business logic
 │       ├── StorageService.ts           # AsyncStorage wrapper
 │       ├── AudioService.ts             # Audio playback/recording/TTS
@@ -114,7 +117,13 @@ SoulSync/
 │       └── JournalExportService.ts     # PDF generation
 ├── assets/
 │   ├── demo/                # Demo GIF for README
-│   └── audio/               # Meditation tracks
+│   └── audio/               # Meditation tracks with layered soundscapes
+│       ├── soul_remembrance.mp3        # 528 Hz + binaural beats
+│       ├── quantum_field.mp3           # 432 Hz + theta waves
+│       ├── past_life.mp3               # 417 Hz + harmonics
+│       ├── higher_self.mp3             # 741 Hz + tremolo
+│       ├── body_scan.mp3               # 528 Hz + 396 Hz
+│       └── breathing_background.mp3    # 396 Hz + 594 Hz
 ├── README.md                # This file
 ├── API_REFERENCE.md         # Complete API documentation
 ├── ARCHITECTURE.md          # Architecture details
@@ -242,19 +251,22 @@ Onboarding (first launch)
   ↓
 Login (if not authenticated)
   ↓
-Main App (Bottom Tabs):
-├── Home - Daily affirmations & stats
-├── Meditate - Meditation library & player (QHHT Guide modal)
-├── Affirm - Voice-recorded affirmations (NEW)
-├── Plan - Action planner with calendar sync (NEW)
-├── Visualize - Vision board creator
-├── Journal - Entry writing
-└── Profile - Settings & stats
+Main App (6 Bottom Tabs):
+├── 🏠 Home - Daily affirmations & stats
+├── 🪐 Journeys - QHHT meditation library (5 guided meditations)
+├── 📻 Sounds - Healing frequencies & soundscapes
+├── 💧 Breathe - Breathing exercises (4 patterns)
+├── 📱 Tools - Soul toolkit hub:
+│   ├── 📖 Journal - Entry writing & PDF export
+│   ├── 🎤 Affirmations - Voice-recorded affirmations
+│   ├── ✅ Action Planner - Task generation & calendar sync
+│   └── 🌌 Vision Board - Parallel reality visualization
+└── 👤 Profile - Settings & stats
 
 Modals:
-├── MeditationPlayer - Full-screen audio player
-├── PremiumUpgrade - Subscription flow (NEW)
-├── BreathingExercise - Box breathing
+├── MeditationPlayer - Full-screen audio player with animations
+├── PremiumUpgrade - Subscription flow
+├── QHHTGuide - Learn about QHHT methodology
 └── MindfulMoment - Quick practices
 ```
 
@@ -357,9 +369,9 @@ This app uses soul-centered language throughout:
 
 ## 📊 Progress
 
-**~92% Core Features Complete**
+**~95% Core Features Complete**
 
-✅ Services, meditation with TTS, animated player, affirmations, action planner, vision boards, journal PDF export, onboarding, premium UI
+✅ Services, layered audio with binaural beats, meditation with optimized TTS, animated player, breathing exercises, affirmations, action planner, vision boards, journal PDF export, onboarding, premium UI, reorganized navigation
 🚧 Real IAP integration, cloud sync, unit tests, Lottie animations
 
 ## 📚 Documentation

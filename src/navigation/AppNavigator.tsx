@@ -14,6 +14,9 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import JournalScreen from '../screens/JournalScreen';
 import MeditationScreen from '../screens/MeditationScreen';
+import MeditationJourneysScreen from '../screens/MeditationJourneysScreen';
+import SoundscapesScreen from '../screens/SoundscapesScreen';
+import SoulToolsScreen from '../screens/SoulToolsScreen';
 import MeditationSessionScreen from '../screens/MeditationSessionScreen';
 import MeditationPlayerScreen from '../screens/MeditationPlayerScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -48,12 +51,16 @@ export type RootStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
-  Meditation: undefined;
-  Affirmations: undefined;
-  ActionPlanner: undefined;
-  VisionBoard: undefined;
-  Journal: undefined;
+  Journeys: undefined;
+  Soundscapes: undefined;
+  Breathe: undefined;
+  SoulTools: undefined;
   Profile: undefined;
+  // Keep these for internal navigation from SoulTools
+  Journal?: undefined;
+  Affirmations?: undefined;
+  ActionPlanner?: undefined;
+  VisionBoard?: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -68,16 +75,14 @@ const MainTabs = () => {
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Meditation') {
-            iconName = focused ? 'sparkles' : 'sparkles-outline';
-          } else if (route.name === 'Affirmations') {
-            iconName = focused ? 'mic' : 'mic-outline';
-          } else if (route.name === 'ActionPlanner') {
-            iconName = focused ? 'list' : 'list-outline';
-          } else if (route.name === 'VisionBoard') {
-            iconName = focused ? 'git-network' : 'git-network-outline';
-          } else if (route.name === 'Journal') {
-            iconName = focused ? 'book' : 'book-outline';
+          } else if (route.name === 'Journeys') {
+            iconName = focused ? 'planet' : 'planet-outline';
+          } else if (route.name === 'Soundscapes') {
+            iconName = focused ? 'radio' : 'radio-outline';
+          } else if (route.name === 'Breathe') {
+            iconName = focused ? 'water' : 'water-outline';
+          } else if (route.name === 'SoulTools') {
+            iconName = focused ? 'apps' : 'apps-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           } else {
@@ -140,43 +145,35 @@ const MainTabs = () => {
         }}
       />
       <Tab.Screen
-        name="Meditation"
-        component={MeditationScreen}
+        name="Journeys"
+        component={MeditationJourneysScreen}
         options={{
-          title: 'Meditate',
-          tabBarLabel: 'Meditate',
+          title: 'Meditation Journeys',
+          tabBarLabel: 'Journeys',
         }}
       />
       <Tab.Screen
-        name="Affirmations"
-        component={AffirmationScreen}
+        name="Soundscapes"
+        component={SoundscapesScreen}
         options={{
-          title: 'Affirmations',
-          tabBarLabel: 'Affirm',
+          title: 'Soundscapes',
+          tabBarLabel: 'Sounds',
         }}
       />
       <Tab.Screen
-        name="ActionPlanner"
-        component={ActionPlannerScreen}
+        name="Breathe"
+        component={BreathingExerciseScreen}
         options={{
-          title: 'Action Planner',
-          tabBarLabel: 'Plan',
+          title: 'Breathing',
+          tabBarLabel: 'Breathe',
         }}
       />
       <Tab.Screen
-        name="VisionBoard"
-        component={VisionBoardScreen}
+        name="SoulTools"
+        component={SoulToolsScreen}
         options={{
-          title: 'Visualize',
-          tabBarLabel: 'Visualize',
-        }}
-      />
-      <Tab.Screen
-        name="Journal"
-        component={JournalScreen}
-        options={{
-          title: 'Journal',
-          tabBarLabel: 'Journal',
+          title: 'Soul Tools',
+          tabBarLabel: 'Tools',
         }}
       />
       <Tab.Screen
@@ -185,6 +182,35 @@ const MainTabs = () => {
         options={{
           title: 'Profile',
           tabBarLabel: 'Profile',
+        }}
+      />
+      {/* Hidden tabs for internal navigation from SoulTools */}
+      <Tab.Screen
+        name="Journal"
+        component={JournalScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="Affirmations"
+        component={AffirmationScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="ActionPlanner"
+        component={ActionPlannerScreen}
+        options={{
+          tabBarButton: () => null,
+        }}
+      />
+      <Tab.Screen
+        name="VisionBoard"
+        component={VisionBoardScreen}
+        options={{
+          tabBarButton: () => null,
         }}
       />
     </Tab.Navigator>
@@ -264,14 +290,6 @@ const AppNavigator = () => {
             <Stack.Screen
               name="MeditationPlayer"
               component={MeditationPlayerScreen}
-              options={{
-                animation: 'slide_from_bottom',
-                presentation: 'modal',
-              }}
-            />
-            <Stack.Screen
-              name="BreathingExercise"
-              component={BreathingExerciseScreen}
               options={{
                 animation: 'slide_from_bottom',
                 presentation: 'modal',

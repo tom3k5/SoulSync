@@ -406,22 +406,27 @@ export default Screen;
 
 ### Screen Categories
 
-#### 1. **Core Screens** (Bottom Tab Navigation)
+#### 1. **Core Screens** (Bottom Tab Navigation - 6 Tabs)
 - `HomeScreen` - Dashboard with daily affirmation and stats
-- `MeditationScreen` - Meditation library grid
+- `MeditationJourneysScreen` - QHHT meditation library (meditation tracks only)
+- `SoundscapesScreen` - Healing frequencies and soundscapes
+- `BreathingExerciseScreen` - Breathing exercises (4 patterns: Box, 4-7-8, Energizing, Deep)
+- `SoulToolsScreen` - Unified hub for Journal, Affirmations, Action Planner, Vision Board
+- `ProfileScreen` - User settings, stats, premium status
+
+#### 2. **Hidden Tab Screens** (Accessible from SoulToolsScreen)
+- `JournalScreen` - Journal entries with PDF export
 - `AffirmationScreen` - Voice-recorded affirmations list
 - `ActionPlannerScreen` - AI-generated tasks from vision boards
 - `VisionBoardScreen` - Parallel reality visualization with 68s timer
-- `JournalScreen` - Journal entries with PDF export
-- `ProfileScreen` - User settings, stats, premium status
 
-#### 2. **Modal Screens** (Stack Navigation)
+#### 3. **Modal Screens** (Stack Navigation)
 - `MeditationPlayerScreen` - Full-screen audio player with animations
 - `PremiumUpgradeScreen` - Premium feature showcase
-- `BreathingExerciseScreen` - Box breathing guide
 - `MindfulMomentScreen` - Quick mindfulness practices
+- `QHHTGuide` - QHHT methodology information
 
-#### 3. **Auth & Onboarding Screens**
+#### 4. **Auth & Onboarding Screens**
 - `OnboardingScreen` - 4-slide intro to QHHT concepts
 - `LoginScreen` - Email/password authentication
 
@@ -628,19 +633,24 @@ App
 │   └── LoginScreen
 │
 └── Main Stack (authenticated)
-    ├── Bottom Tabs
-    │   ├── Home
-    │   ├── Meditate
-    │   ├── Affirm
-    │   ├── Plan
-    │   ├── Visualize
+    ├── Bottom Tabs (6 visible)
+    │   ├── 🏠 Home - Dashboard
+    │   ├── 🪐 Journeys - QHHT Meditations
+    │   ├── 📻 Sounds - Healing Frequencies
+    │   ├── 💧 Breathe - Breathing Exercises
+    │   ├── 📱 Tools - Soul Toolkit Hub
+    │   └── 👤 Profile - Settings
+    │
+    ├── Hidden Tabs (accessed from Tools)
     │   ├── Journal
-    │   └── Profile
+    │   ├── Affirmations
+    │   ├── ActionPlanner
+    │   └── VisionBoard
     │
     └── Modal Stacks
         ├── MeditationPlayer
         ├── PremiumUpgrade
-        ├── BreathingExercise
+        ├── QHHTGuide
         └── MindfulMoment
 ```
 
@@ -654,15 +664,14 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
-      tabBarIcon: ({ color, size }) => {
+      tabBarIcon: ({ focused, color, size }) => {
         const icons = {
-          Home: 'home',
-          Meditate: 'planet',
-          Affirm: 'mic',
-          Plan: 'list',
-          Visualize: 'images',
-          Journal: 'book',
-          Profile: 'person',
+          Home: focused ? 'home' : 'home-outline',
+          Journeys: focused ? 'planet' : 'planet-outline',
+          Soundscapes: focused ? 'radio' : 'radio-outline',
+          Breathe: focused ? 'water' : 'water-outline',
+          SoulTools: focused ? 'apps' : 'apps-outline',
+          Profile: focused ? 'person' : 'person-outline',
         };
         return <Ionicons name={icons[route.name]} size={size} color={color} />;
       },
@@ -671,7 +680,7 @@ const TabNavigator = () => (
       tabBarStyle: { backgroundColor: COLORS.surface },
     })}
   >
-    {/* Tab screens */}
+    {/* 6 visible tabs + 4 hidden tabs (Journal, Affirmations, ActionPlanner, VisionBoard) */}
   </Tab.Navigator>
 );
 

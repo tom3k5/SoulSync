@@ -220,11 +220,10 @@ const BreathingExerciseScreen = () => {
       <StatusBar style="light" />
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={COLORS.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Breathing Exercise</Text>
-          <View style={styles.placeholder} />
+          <View>
+            <Text style={styles.headerTitle}>Breathing Exercises</Text>
+            <Text style={styles.headerSubtitle}>Calm Your Mind & Body</Text>
+          </View>
         </View>
 
         {!isActive && (
@@ -321,26 +320,17 @@ const styles = StyleSheet.create({
     padding: SPACING.lg,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: SPACING.xl,
   },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   headerTitle: {
-    fontSize: SIZES.font.xl,
+    fontSize: SIZES.font.xxl,
     fontWeight: 'bold',
     color: COLORS.text,
+    marginBottom: SPACING.xs,
   },
-  placeholder: {
-    width: 40,
+  headerSubtitle: {
+    fontSize: SIZES.font.md,
+    color: COLORS.textSecondary,
   },
   patternSelector: {
     gap: SPACING.md,
