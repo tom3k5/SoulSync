@@ -490,17 +490,22 @@ if (AudioService.isRecording()) {
 
 ##### `speakText(text: string, options?: SpeakOptions): Promise<void>`
 
-Speaks text using device TTS engine. Used for QHHT guided meditations.
+Speaks text using device TTS engine with meditation-optimized voice settings. Used for QHHT guided meditations.
 
 **Parameters:**
 - `text: string` - Text to speak
 - `options?: object` - TTS options:
   - `language?: string` - Language code (default: 'en-US')
-  - `pitch?: number` - Pitch (0.5 to 2.0, default: 1.0)
-  - `rate?: number` - Speed (0.5 to 2.0, default: 0.8)
+  - `pitch?: number` - Pitch (0.5 to 2.0, default: 0.88 - lower, soothing)
+  - `rate?: number` - Speed (0.5 to 2.0, default: 0.65 - very slow, calming)
   - `onStart?: function` - Called when speech starts
   - `onDone?: function` - Called when speech completes
   - `onError?: function` - Called on error
+
+**Default Meditation Settings:**
+- **Pitch:** 0.88 (lower for soothing, warm tone)
+- **Rate:** 0.65 (very slow, calming pace for meditation)
+- **Volume:** 0.85 (gentle overlay over background music)
 
 **Example:**
 ```typescript
@@ -508,8 +513,8 @@ await AudioService.speakText(
   'Welcome to your QHHT meditation journey...',
   {
     language: 'en-US',
-    pitch: 0.95, // Slightly lower for calming effect
-    rate: 0.7,   // Slower for meditation
+    pitch: 0.88, // Lower, more soothing (default)
+    rate: 0.65,  // Very slow, calming (default)
     onStart: () => setIsSpeaking(true),
     onDone: () => {
       setIsSpeaking(false);
@@ -521,6 +526,21 @@ await AudioService.speakText(
     },
   }
 );
+```
+
+**Meditation Script-Specific Settings:**
+```typescript
+// QHHT Induction (extra slow)
+rate: 0.65, pitch: 0.88
+
+// Past Life Regression (slowest)
+rate: 0.62, pitch: 0.87
+
+// Higher Self Communication
+rate: 0.66, pitch: 0.89
+
+// Body Scan & Healing
+rate: 0.64, pitch: 0.86
 ```
 
 ##### `stopSpeech(): void`
@@ -973,11 +993,18 @@ interface AudioTrack {
   duration: number; // in seconds
   isPremium: boolean;
   category: 'meditation' | 'soundscape' | 'affirmation' | 'guidance';
-  frequency?: string; // e.g., '528 Hz'
+  frequency?: string; // e.g., '528 Hz', '432 Hz'
   description?: string;
-  uri: string;
+  uri: string | number; // local asset (require() returns number) or URI string
 }
 ```
+
+**Audio Features:**
+- **Layered Soundscapes:** Multiple harmonics (fundamental + 1.5x + 2x frequencies) for richness
+- **Binaural Beats:** 5-6 Hz theta waves for deep meditation states
+- **Tremolo Effects:** Gentle pulsing (0.1-0.25 Hz) creates evolving, non-monotonous soundscape
+- **Brown Noise:** Warm ambient background (better than pink/white noise)
+- **High Quality:** 192 kbps MP3, 44.1 kHz stereo
 
 ### MeditationScript
 

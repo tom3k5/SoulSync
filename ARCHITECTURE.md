@@ -36,9 +36,10 @@ SoulSync is a React Native mobile application built with Expo, following a **Ser
 ## Technology Stack
 
 ### Core Framework
-- **React Native** 0.81 - Cross-platform mobile framework
+- **React Native** 0.82 - Cross-platform mobile framework
 - **Expo** ~54.0 - Development platform and build tools
 - **TypeScript** ~5.9 - Type-safe JavaScript
+- **React** 19.2 - UI framework
 
 ### Navigation
 - **@react-navigation/native** ^7.1 - Navigation container
@@ -115,7 +116,13 @@ SoulSync/
 │       └── JournalExportService.ts     # PDF generation
 │
 ├── assets/
-│   ├── audio/               # Meditation MP3 files (placeholder URIs)
+│   ├── audio/               # Meditation MP3 files with layered soundscapes
+│   │   ├── soul_remembrance.mp3    # 528 Hz with binaural beats
+│   │   ├── quantum_field.mp3       # 432 Hz with theta waves
+│   │   ├── past_life.mp3           # 417 Hz with harmonics
+│   │   ├── higher_self.mp3         # 741 Hz with tremolo
+│   │   ├── body_scan.mp3           # 528 Hz + 396 Hz dual frequencies
+│   │   └── breathing_background.mp3 # 396 Hz + 594 Hz calming tones
 │   └── demo/                # Screenshots and GIFs
 │
 ├── App.tsx                  # Root component
@@ -453,8 +460,9 @@ private readonly KEYS = {
 **Responsibilities:**
 - Audio playback (meditation tracks, soundscapes)
 - Voice recording (custom affirmations)
-- Text-to-speech (QHHT guided meditations)
+- Text-to-speech (QHHT guided meditations with optimized voice settings)
 - Audio mode configuration
+- Layered soundscape management
 
 **Key State:**
 ```typescript
@@ -462,6 +470,26 @@ private sound: Sound | null = null;
 private currentTrack: AudioTrack | null = null;
 private recording: Audio.Recording | null = null;
 private isSpeaking: boolean = false;
+private premiumTtsSound: Audio.Sound | null = null;
+```
+
+**Audio Features:**
+- **Layered Soundscapes:** Multi-frequency harmonics with binaural beats
+- **Solfeggio Frequencies:** 396 Hz, 417 Hz, 432 Hz, 528 Hz, 741 Hz
+- **Theta Brainwave Entrainment:** 5-6 Hz binaural beats for deep meditation
+- **Tremolo Effects:** Gentle pulsing creates evolving soundscape
+- **Brown Noise:** Warm ambient background
+- **High Quality:** 192 kbps MP3, 44.1 kHz stereo
+
+**TTS Optimization:**
+```typescript
+// Meditation-optimized voice settings
+Speech.speak(text, {
+  language: 'en-US',
+  pitch: 0.88,    // Lower, more soothing
+  rate: 0.65,     // Very slow, calming pace
+  volume: 0.85,   // Gentle overlay over music
+});
 ```
 
 **Initialization:**
@@ -471,6 +499,13 @@ await Audio.setAudioModeAsync({
   staysActiveInBackground: true,
   shouldDuckAndroid: true,
 });
+```
+
+**Audio Loading:**
+```typescript
+// Handles both require() module references and URI strings
+const source = typeof track.uri === 'number' ? track.uri : { uri: track.uri };
+const { sound } = await Audio.Sound.createAsync(source, { shouldPlay: false });
 ```
 
 ### NotificationService
@@ -500,11 +535,16 @@ Notifications.setNotificationHandler({
 - Supply post-meditation journal prompts
 
 **Scripts:**
-1. QHHT Induction & Soul Remembrance (10 min)
-2. Quantum Field & Divine Source (15 min)
-3. Past Life Regression (20 min)
-4. Higher Self Communication (15 min)
-5. Body Scanning & Theta Healing (30 min)
+1. QHHT Induction & Soul Remembrance (5 min) - Classic countdown 10-1 induction
+2. Quantum Field & Divine Source (5 min) - Parallel reality exploration
+3. Past Life Regression (5 min) - Full QHHT regression protocol
+4. Higher Self Communication (5 min) - Direct dialogue with Higher Self
+5. Body Scanning & Theta Healing (5 min) - Complete body scan with Council of Elders
+
+**TTS Voice Settings:**
+- Rate: 0.62-0.68 (extra slow for deep meditation)
+- Pitch: 0.86-0.9 (lower for soothing, warm tone)
+- Volume: 0.85 (gentle overlay over background music)
 
 ### JournalExportService
 

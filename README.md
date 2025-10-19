@@ -5,8 +5,9 @@
 A spiritual manifestation mobile app inspired by Dolores Cannon's Quantum Healing Hypnosis Technique (QHHT). Built with React Native and Expo to help users reconnect with their soul's essence, visualize parallel realities, and manifest their desires.
 
 [![Run with Expo](https://img.shields.io/badge/Run%20with-Expo-4630EB?logo=expo&style=for-the-badge)](https://expo.dev)
-[![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react&style=for-the-badge)](https://reactnative.dev)
+[![React Native](https://img.shields.io/badge/React%20Native-0.82-61DAFB?logo=react&style=for-the-badge)](https://reactnative.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org)
+[![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&style=for-the-badge)](https://react.dev)
 
 ## 🎬 Demo
 
@@ -19,10 +20,14 @@ A spiritual manifestation mobile app inspired by Dolores Cannon's Quantum Healin
 ### Implemented ✅
 
 - **QHHT-Inspired Onboarding** - 4 beautiful slides introducing soul consciousness and quantum realities
-- **Soul Remembrance Meditation** - 8 guided meditation tracks with full audio player
-- **QHHT Meditation Scripts** - 5 complete guided meditation scripts with TTS narration
+- **Soul Remembrance Meditation** - 8 guided meditation tracks with authentic solfeggio frequencies
+- **QHHT Meditation Scripts** - 5 complete guided meditation scripts with natural TTS narration
+- **Layered Soundscapes** - Rich audio with binaural beats, harmonics, and ambient backgrounds
+- **Solfeggio Frequencies** - 396 Hz, 417 Hz, 432 Hz, 528 Hz, 741 Hz for healing and transformation
+- **Theta Brainwave Entrainment** - 5-6 Hz binaural beats for deep meditation states
 - **Animated Meditation Player** - Pulsing visualizer with 60fps native animations
-- **Playback Controls** - Speed controls (0.75x, 1.0x, 1.25x), repeat/loop, TTS voice guidance
+- **Playback Controls** - Speed controls (0.75x, 1.0x, 1.25x), repeat/loop, natural voice guidance
+- **Breathing Exercise** - Box breathing (4-7-8) with calming music and voice guidance
 - **Parallel World Visualization** - Create vision boards with 68-second manifestation timer
 - **Daily Affirmations** - 15 Dolores Cannon-inspired messages with notifications
 - **Affirmation Weaver** - Record custom affirmations in your own voice with expo-av
@@ -126,6 +131,41 @@ accent: '#E91E63'       // Manifestation Pink
 background: '#0A0E27'   // Deep Space Navy
 ```
 
+## 🎵 Audio Features
+
+### Meditation Audio
+
+All meditation tracks feature professionally designed soundscapes:
+
+- **Layered Frequencies**: Multiple harmonics (fundamental + 1.5x + 2x) for richness
+- **Binaural Beats**: 5-6 Hz theta waves for deep meditation states
+- **Tremolo Effects**: Gentle pulsing creates evolving, non-monotonous soundscape
+- **Brown Noise**: Warm ambient background (better than pink/white noise)
+- **High Quality**: 192 kbps MP3, 44.1 kHz stereo
+
+**Available Tracks:**
+1. **Soul Remembrance** (528 Hz) - DNA repair frequency with rich harmonics
+2. **Quantum Field** (432 Hz) - Universal harmony with 6 Hz theta binaural beats
+3. **Past Life Regression** (417 Hz) - Facilitating change with 5 Hz theta beats
+4. **Higher Self** (741 Hz) - Awakening intuition with 5.5 Hz theta beats
+5. **Body Scan** (528 Hz + 396 Hz) - Healing + liberation dual frequencies
+
+### Voice Guidance
+
+Natural, calming TTS with meditation-optimized settings:
+
+- **Slower Rate**: 0.62-0.68x speed for peaceful pacing
+- **Lower Pitch**: 0.86-0.9 for soothing, warm tone
+- **Gentle Volume**: 0.85 for soft overlay over music
+- **Custom per Track**: Each meditation has optimal voice settings
+
+### Breathing Exercise Audio
+
+- **Calming Background**: 396 Hz + 594 Hz with brown noise
+- **10-Minute Loop**: Seamless ambient soundscape
+- **Phase Announcements**: Voice guidance for "Breathe In", "Hold", "Breathe Out"
+- **Auto-sync**: Music and voice perfectly synchronized with animation
+
 ## 🔧 Key Services
 
 ### StorageService
@@ -141,13 +181,27 @@ await StorageService.incrementSession(minutes);
 
 ### AudioService
 
-Handles meditation audio playback:
+Handles meditation audio playback, recording, and TTS:
 
 ```typescript
+// Audio playback
 await AudioService.initialize();
 await AudioService.loadTrack(track, onPlaybackUpdate);
 await AudioService.play();
 await AudioService.pause();
+await AudioService.seekTo(positionMillis);
+
+// Voice guidance (TTS)
+await AudioService.speakText('Breathe In', {
+  rate: 0.65,
+  pitch: 0.88,
+  language: 'en-US',
+});
+await AudioService.stopSpeech();
+
+// Recording (affirmations)
+await AudioService.startRecording();
+const uri = await AudioService.stopRecording();
 ```
 
 ### NotificationService
