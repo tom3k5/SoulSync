@@ -1,5 +1,5 @@
 // PremiumUpgradeScreen.tsx - Premium subscription upgrade flow
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,15 +7,17 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import { PurchasesPackage } from 'react-native-purchases';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
 import Button from '../components/Button';
-import StorageService from '../services/StorageService';
+import SubscriptionService from '../services/SubscriptionService';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
 import { useUser } from '../contexts/UserContext';
 
@@ -26,28 +28,99 @@ interface PricingPlan {
   period: string;
   savings?: string;
   isPopular?: boolean;
+  package?: PurchasesPackage;
 }
 
 const PremiumUpgradeScreen = ({ navigation }: any) => {
   const { user, setUser } = useUser();
   const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
+  const [plans, setPlans] = useState<PricingPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState(false);
 
-  const plans: PricingPlan[] = [
-    {
-      id: 'monthly',
-      title: 'Monthly',
-      price: '$4.99',
-      period: '/month',
-    },
-    {
-      id: 'yearly',
-      title: 'Yearly',
-      price: '$39.99',
-      period: '/year',
-      savings: 'Save 33%',
-      isPopular: true,
-    },
-  ];
+  useEffect(() => {
+    loadOfferings();
+  }, []);
+
+  const loadOfferings = async () => {
+    try {
+      setLoading(true);
+      const offerings = await SubscriptionService.getOfferings();
+
+      if (!offerings) {
+        // Fallback to mock plans if RevenueCat not configured
+        setPlans([
+          {
+            id: 'monthly',
+            title: 'Monthly',
+            price: '$4.99',
+            period: '/month',
+          },
+          {
+            id: 'yearly',
+            title: 'Yearly',
+            price: '$39.99',
+            period: '/year',
+            savings: 'Save 33%',
+            isPopular: true,
+          },
+        ]);
+        setLoading(false);
+        return;
+      }
+
+      const loadedPlans: PricingPlan[] = [];
+
+      // Add monthly plan
+      if (offerings.monthly) {
+        const info = SubscriptionService.getProductInfo(offerings.monthly);
+        loadedPlans.push({
+          id: 'monthly',
+          title: 'Monthly',
+          price: info.price,
+          period: '/month',
+          package: offerings.monthly,
+        });
+      }
+
+      // Add annual plan
+      if (offerings.annual) {
+        const info = SubscriptionService.getProductInfo(offerings.annual);
+        loadedPlans.push({
+          id: 'yearly',
+          title: 'Yearly',
+          price: info.price,
+          period: '/year',
+          savings: info.pricePerMonth ? `$${info.pricePerMonth}/mo` : 'Save 33%',
+          isPopular: true,
+          package: offerings.annual,
+        });
+      }
+
+      // Add lifetime plan if available
+      if (offerings.lifetime) {
+        const info = SubscriptionService.getProductInfo(offerings.lifetime);
+        loadedPlans.push({
+          id: 'lifetime',
+          title: 'Lifetime',
+          price: info.price,
+          period: 'one-time',
+          savings: 'Best Value',
+          package: offerings.lifetime,
+        });
+      }
+
+      setPlans(loadedPlans);
+      if (loadedPlans.length > 0) {
+        setSelectedPlan(loadedPlans.find(p => p.isPopular)?.id || loadedPlans[0].id);
+      }
+    } catch (error) {
+      console.error('Error loading offerings:', error);
+      Alert.alert('Error', 'Could not load subscription plans. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const features = [
     {
@@ -93,37 +166,77 @@ const PremiumUpgradeScreen = ({ navigation }: any) => {
   ];
 
   const handlePurchase = async () => {
+    const selectedPlanData = plans.find((p) => p.id === selectedPlan);
+    if (!selectedPlanData) return;
+
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
-    // Mock purchase flow for now
-    Alert.alert(
-      'Purchase Successful! 🌟',
-      'Welcome to SoulSync Premium! Your eternal soul thanks you for investing in your growth.',
-      [
-        {
-          text: 'Start Manifesting',
-          onPress: async () => {
-            // Update user profile to premium
-            const profile = await StorageService.getUserProfile();
-            if (profile) {
-              profile.isPremium = true;
-              await StorageService.saveUserProfile(profile);
-              if (user) {
-                setUser({ ...user });
-              }
-            }
-            await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            navigation.goBack();
+    // If using real RevenueCat packages
+    if (selectedPlanData.package) {
+      try {
+        setPurchasing(true);
+        const success = await SubscriptionService.purchasePackage(selectedPlanData.package);
+
+        if (success) {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Alert.alert(
+            'Welcome to Premium! 🌟',
+            'Your eternal soul thanks you for investing in your growth.',
+            [{ text: 'Start Manifesting', onPress: () => navigation.goBack() }]
+          );
+        }
+      } catch (error) {
+        console.error('Purchase error:', error);
+      } finally {
+        setPurchasing(false);
+      }
+    } else {
+      // Mock purchase flow (fallback when RevenueCat not configured)
+      Alert.alert(
+        'Demo Mode',
+        'RevenueCat is not configured. In production, this would process a real purchase.\n\nEnable premium access anyway?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Enable Premium',
+            onPress: async () => {
+              await SubscriptionService.syncPremiumStatus();
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              navigation.goBack();
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const handleRestore = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert('Restore Purchases', 'No previous purchases found.');
+
+    try {
+      setPurchasing(true);
+      const restored = await SubscriptionService.restorePurchases();
+
+      if (restored) {
+        navigation.goBack();
+      }
+    } catch (error) {
+      console.error('Restore error:', error);
+    } finally {
+      setPurchasing(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <GradientBackground>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.secondary} />
+          <Text style={styles.loadingText}>Loading subscription plans...</Text>
+        </View>
+      </GradientBackground>
+    );
+  }
 
   return (
     <GradientBackground>
@@ -223,14 +336,29 @@ const PremiumUpgradeScreen = ({ navigation }: any) => {
         </Card>
 
         <Button
-          title={`Start Premium - ${plans.find((p) => p.id === selectedPlan)?.price}`}
+          title={
+            purchasing
+              ? 'Processing...'
+              : `Start Premium - ${plans.find((p) => p.id === selectedPlan)?.price || ''}`
+          }
           onPress={handlePurchase}
           style={styles.purchaseButton}
-          icon="star"
+          icon={purchasing ? undefined : 'star'}
+          disabled={purchasing}
         />
 
-        <TouchableOpacity onPress={handleRestore}>
-          <Text style={styles.restoreText}>Restore Previous Purchase</Text>
+        {purchasing && (
+          <ActivityIndicator
+            size="small"
+            color={COLORS.secondary}
+            style={{ marginVertical: SPACING.sm }}
+          />
+        )}
+
+        <TouchableOpacity onPress={handleRestore} disabled={purchasing}>
+          <Text style={[styles.restoreText, purchasing && { opacity: 0.5 }]}>
+            Restore Previous Purchase
+          </Text>
         </TouchableOpacity>
 
         <Text style={styles.disclaimer}>
@@ -246,6 +374,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: SPACING.lg,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: SPACING.md,
+  },
+  loadingText: {
+    fontSize: SIZES.font.md,
+    color: COLORS.textSecondary,
   },
   closeButton: {
     alignSelf: 'flex-end',

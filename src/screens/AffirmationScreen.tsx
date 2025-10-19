@@ -1,5 +1,5 @@
 // AffirmationScreen.tsx - Weave soul-aligned affirmations with voice recording
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Animated,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
+import LottieView from 'lottie-react-native';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
 import Button from '../components/Button';
@@ -28,6 +30,10 @@ const AffirmationScreen = () => {
   const [playingSound, setPlayingSound] = useState<Audio.Sound | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
+  // Animation refs for recording pulsing effect
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const glowAnim = useRef(new Animated.Value(0)).current;
+
   useEffect(() => {
     loadAffirmations();
     setupAudio();
@@ -37,6 +43,45 @@ const AffirmationScreen = () => {
       }
     };
   }, []);
+
+  // Pulsing animation effect during recording
+  useEffect(() => {
+    if (isRecording) {
+      // Start pulsing animation
+      Animated.loop(
+        Animated.sequence([
+          Animated.parallel([
+            Animated.timing(pulseAnim, {
+              toValue: 1.2,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(glowAnim, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: false,
+            }),
+          ]),
+          Animated.parallel([
+            Animated.timing(pulseAnim, {
+              toValue: 1,
+              duration: 1000,
+              useNativeDriver: true,
+            }),
+            Animated.timing(glowAnim, {
+              toValue: 0,
+              duration: 1000,
+              useNativeDriver: false,
+            }),
+          ]),
+        ])
+      ).start();
+    } else {
+      // Reset animation
+      pulseAnim.setValue(1);
+      glowAnim.setValue(0);
+    }
+  }, [isRecording]);
 
   const setupAudio = async () => {
     try {
@@ -205,21 +250,52 @@ const AffirmationScreen = () => {
               <Text style={styles.recordLabel}>
                 {isRecording ? 'Recording your voice...' : 'Optional: Record in your voice'}
               </Text>
-              <TouchableOpacity
-                style={[
-                  styles.recordButton,
-                  isRecording && styles.recordButtonActive,
-                ]}
-                onPress={isRecording ? stopRecording : startRecording}
+
+              {/* Animated recording button with pulsing glow */}
+              <Animated.View
+                style={{
+                  transform: [{ scale: pulseAnim }],
+                }}
               >
-                <Ionicons
-                  name={isRecording ? 'stop-circle' : 'mic'}
-                  size={32}
-                  color={isRecording ? COLORS.error : COLORS.secondary}
-                />
-              </TouchableOpacity>
+                <Animated.View
+                  style={[
+                    styles.recordButtonGlow,
+                    {
+                      opacity: glowAnim,
+                      backgroundColor: glowAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['transparent', COLORS.secondary + '40'],
+                      }),
+                    },
+                  ]}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.recordButton,
+                      isRecording && styles.recordButtonActive,
+                    ]}
+                    onPress={isRecording ? stopRecording : startRecording}
+                  >
+                    <Ionicons
+                      name={isRecording ? 'stop-circle' : 'mic'}
+                      size={32}
+                      color={isRecording ? COLORS.error : COLORS.secondary}
+                    />
+                  </TouchableOpacity>
+                </Animated.View>
+              </Animated.View>
+
+              {/* Lottie animation during recording */}
               {isRecording && (
-                <Text style={styles.recordingIndicator}>● REC</Text>
+                <View style={styles.lottieContainer}>
+                  <LottieView
+                    source={require('../../assets/lottie/recording-pulse.json')}
+                    autoPlay
+                    loop
+                    style={styles.lottieAnimation}
+                  />
+                  <Text style={styles.recordingIndicator}>● REC</Text>
+                </View>
               )}
             </View>
 
@@ -343,6 +419,13 @@ const styles = StyleSheet.create({
     fontSize: SIZES.font.sm,
     color: COLORS.textSecondary,
   },
+  recordButtonGlow: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   recordButton: {
     width: 64,
     height: 64,
@@ -353,6 +436,15 @@ const styles = StyleSheet.create({
   },
   recordButtonActive: {
     backgroundColor: COLORS.error + '20',
+  },
+  lottieContainer: {
+    alignItems: 'center',
+    gap: SPACING.xs,
+    marginTop: SPACING.sm,
+  },
+  lottieAnimation: {
+    width: 120,
+    height: 120,
   },
   recordingIndicator: {
     fontSize: SIZES.font.sm,
