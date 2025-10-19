@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
 import { COLORS, SPACING, SIZES } from '../constants/theme';
+import AudioService from '../services/AudioService';
 
 type BreathingPhase = 'inhale' | 'hold1' | 'exhale' | 'hold2';
 
@@ -19,6 +20,7 @@ const BreathingExerciseScreen = () => {
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [backgroundMusicLoaded, setBackgroundMusicLoaded] = useState(false);
 
   const breathingPatterns = {
     box: { name: 'Box Breathing', inhale: 4, hold1: 4, exhale: 4, hold2: 4, description: '4-4-4-4 pattern for stress relief' },
@@ -28,6 +30,45 @@ const BreathingExerciseScreen = () => {
   };
 
   const currentPattern = breathingPatterns[selectedPattern as keyof typeof breathingPatterns];
+
+  // Initialize background music
+  useEffect(() => {
+    const loadBackgroundMusic = async () => {
+      try {
+        await AudioService.initialize();
+        await AudioService.loadTrack({
+          id: 'breathing_background',
+          title: 'Breathing Background',
+          duration: 600,
+          isPremium: false,
+          category: 'soundscape',
+          uri: require('../../assets/audio/breathing_background.mp3'),
+        });
+        setBackgroundMusicLoaded(true);
+      } catch (error) {
+        console.error('Error loading breathing background music:', error);
+      }
+    };
+    loadBackgroundMusic();
+
+    return () => {
+      AudioService.stop();
+      AudioService.unload();
+      AudioService.stopSpeech();
+    };
+  }, []);
+
+  // Voice guidance for each phase
+  useEffect(() => {
+    if (!isActive || counter !== getCurrentPhaseDuration()) return;
+
+    const phaseText = getPhaseText();
+    AudioService.speakText(phaseText, {
+      rate: 0.75,
+      pitch: 0.9,
+      language: 'en-US',
+    });
+  }, [phase, isActive]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -107,26 +148,51 @@ const BreathingExerciseScreen = () => {
     ).start();
   };
 
-  const handleStartStop = () => {
+  const handleStartStop = async () => {
     if (!isActive) {
       setIsActive(true);
       setPhase('inhale');
       setCounter(currentPattern.inhale);
       setTotalBreaths(0);
+
+      // Start background music
+      if (backgroundMusicLoaded) {
+        try {
+          await AudioService.play();
+        } catch (error) {
+          console.error('Error playing background music:', error);
+        }
+      }
     } else {
       setIsActive(false);
       scaleAnim.setValue(1);
       pulseAnim.setValue(1);
+
+      // Pause background music
+      try {
+        await AudioService.pause();
+        AudioService.stopSpeech();
+      } catch (error) {
+        console.error('Error pausing background music:', error);
+      }
     }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     setIsActive(false);
     setPhase('inhale');
     setCounter(4);
     setTotalBreaths(0);
     scaleAnim.setValue(1);
     pulseAnim.setValue(1);
+
+    // Stop and reset audio
+    try {
+      await AudioService.stop();
+      AudioService.stopSpeech();
+    } catch (error) {
+      console.error('Error stopping audio:', error);
+    }
   };
 
   const getPhaseText = () => {
