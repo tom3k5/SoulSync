@@ -336,12 +336,12 @@ class AudioService {
       options.onStart?.();
       this.currentSpeechCallback?.(true);
 
-      // Call Speech.speak directly like the working test
+      // Call Speech.speak with meditation-optimized settings
       Speech.speak(text, {
         language: options.language || 'en-US',
-        pitch: options.pitch || 1.0,
-        rate: options.rate || 0.8, // Slightly slower for meditation
-        volume: 1.0, // Ensure full volume
+        pitch: options.pitch || 0.88, // Lower, more soothing default
+        rate: options.rate || 0.65, // Very slow, calming default for meditation
+        volume: 0.85, // Slightly lower volume for gentle voice overlay
         onDone: () => {
           console.log('Speech.speak onDone callback triggered');
           this.isSpeaking = false;

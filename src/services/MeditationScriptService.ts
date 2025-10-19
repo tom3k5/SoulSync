@@ -76,8 +76,8 @@ Counting from 1 to 5, returning to the present moment.
 4... Almost back now. Feeling refreshed, renewed, and deeply connected.
 5... Eyes open. Welcome back, eternal soul. You are forever changed by this experience.`,
       ttsOptions: {
-        rate: 0.7, // Very slow, meditative pace
-        pitch: 0.95, // Slightly lower for calming effect
+        rate: 0.65, // Very slow, calming meditative pace
+        pitch: 0.88, // Lower pitch for soothing, gentle voice
         language: 'en-US',
       },
     };
@@ -141,8 +141,8 @@ You now know the truth: All realities exist. You choose which one to experience.
 Gently returning now... bringing this cosmic awareness with you...
 Ready to manifest from your soul's truth. Eyes open when you're ready.`,
       ttsOptions: {
-        rate: 0.75,
-        pitch: 0.93,
+        rate: 0.68,
+        pitch: 0.9,
         language: 'en-US',
       },
     };
@@ -214,8 +214,8 @@ Counting from 1 to 5.
 1... Returning... 2... Integrating the healing... 3... Feeling your body...
 4... Bringing the awareness... 5... Eyes open. Forever changed by what you've remembered.`,
       ttsOptions: {
-        rate: 0.65, // Extra slow for deep regression
-        pitch: 0.92,
+        rate: 0.62, // Extra slow for deep regression
+        pitch: 0.87,
         language: 'en-US',
       },
     };
@@ -283,8 +283,8 @@ You have remembered the truth. You are never separate from your Higher Self.
 
 Eyes open when you're ready. You now know the way home.`,
       ttsOptions: {
-        rate: 0.72,
-        pitch: 0.94,
+        rate: 0.66,
+        pitch: 0.89,
         language: 'en-US',
       },
     };
@@ -364,8 +364,8 @@ Counting from 1 to 5... Feeling better than you have in years.
 
 1... 2... 3... 4... 5... Eyes open. You are healed. You are whole. You are divine.`,
       ttsOptions: {
-        rate: 0.68,
-        pitch: 0.9,
+        rate: 0.64,
+        pitch: 0.86,
         language: 'en-US',
       },
     };
