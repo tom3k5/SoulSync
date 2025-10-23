@@ -85,6 +85,18 @@ npm start
 npm run web
 ```
 
+### Audio Generation (Optional)
+
+Generate high-quality natural voice audio for meditations using opensource TTS:
+
+```bash
+cd scripts
+pip install -r requirements.txt
+python generate_audio.py
+```
+
+See [AUDIO_GENERATION_GUIDE.md](AUDIO_GENERATION_GUIDE.md) for detailed instructions.
+
 ### Enable Onboarding (First Launch)
 
 Edit `src/navigation/AppNavigator.tsx` line 104:

@@ -1,0 +1,7 @@
+# Requirements for audio generation scripts
+
+# Edge TTS - Free, high-quality neural TTS from Microsoft Edge
+edge-tts>=6.1.9
+
+# PyDub - Audio processing (optional, for audio manipulation)
+pydub>=0.25.1
