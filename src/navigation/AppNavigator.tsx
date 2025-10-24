@@ -4,14 +4,13 @@ import {
   useNavigationContainerRef,
   DefaultTheme,
 } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
+import {  createNativeStackNavigator  } from '@react-navigation/native-stack';
+import {  createBottomTabNavigator  } from '@react-navigation/bottom-tabs';
+import {  Platform  } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-import { useUser } from '../contexts/UserContext';
-import { COLORS } from '../constants/theme';
+import {  useUser  } from '../contexts/UserContext';
+import {  COLORS  } from '../constants/theme';
 import CustomTabBar from '../components/CustomTabBar';
 
 // Screens
@@ -33,7 +32,7 @@ import OnboardingScreen from '../screens/OnboardingScreen';
 import AffirmationScreen from '../screens/AffirmationScreen';
 import ActionPlannerScreen from '../screens/ActionPlannerScreen';
 import PremiumUpgradeScreen from '../screens/PremiumUpgradeScreen';
-import { QHHTGuide } from '../components';
+import {  QHHTGuide  } from '../components';
 
 export type RootStackParamList = {
   Onboarding: undefined;

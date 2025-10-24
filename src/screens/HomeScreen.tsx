@@ -1,13 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
+import {  View,  Text,  StyleSheet,  ScrollView  } from 'react-native';
+import {  StatusBar  } from 'expo-status-bar';
+import {  Ionicons  } from '@expo/vector-icons';
+import {  LinearGradient  } from 'expo-linear-gradient';
+import {  useNavigation  } from '@react-navigation/native';
 import GradientBackground from '../components/GradientBackground';
 import Card from '../components/Card';
-import { useUser } from '../contexts/UserContext';
-import { COLORS, SPACING, SIZES } from '../constants/theme';
+import {  useUser  } from '../contexts/UserContext';
+import {  COLORS,  SPACING,  SIZES  } from '../constants/theme';
 
 const HomeScreen = () => {
   const { user } = useUser();

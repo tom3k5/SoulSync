@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit security checks..."
+
+# Run linter (most important for security)
+npm run lint || {
+  echo "❌ Linting failed! Please fix the issues before committing."
+  exit 1
+}
+
+# Run type check
+npm run type-check || {
+  echo "❌ Type checking failed! Please fix the issues before committing."
+  exit 1
+}
+
+# Note: Tests are skipped in pre-commit for faster commits
+# Run 'npm test' manually before pushing
+
+echo "✅ All pre-commit checks passed!"

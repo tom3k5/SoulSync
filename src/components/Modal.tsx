@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Modal as RNModal, TouchableOpacity } from 'react-native';
-import { COLORS, SPACING, SIZES, SHADOWS } from '../constants/theme';
+import {  View,  Text,  StyleSheet,  Modal as RNModal } from 'react-native';
+import {  COLORS,  SPACING,  SIZES,  SHADOWS  } from '../constants/theme';
 import Button from './Button';
 
 interface ModalProps {
